@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 class Store;
 
@@ -13,4 +13,5 @@ struct DepCheck {
     std::string reason;
 };
 
-std::vector<DepCheck> checkDependencies(const std::vector<std::pair<std::string, std::string>>& deps, Store* store);
+std::vector<DepCheck> checkDependencies(
+    const std::vector<std::pair<std::string, std::string>>& deps, Store* store);

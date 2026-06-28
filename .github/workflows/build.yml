@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt update && sudo apt install -y cmake ninja-build libarchive-dev libssl-dev libsqlite3-dev libgtest-dev
+      - run: sudo apt update && sudo apt install -y cmake ninja-build libarchive-dev libssl-dev libsqlite3-dev libgtest-dev clang-format
+      - name: Check formatting
+        run: |
+          clang-format --version
+          make format
+          git diff --exit-code
       - run: make test
 
   windows:

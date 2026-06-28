@@ -1,7 +1,9 @@
 #include "lib.hpp"
+
 #include "store/lib.hpp"
 
-std::vector<DepCheck> checkDependencies(const std::vector<std::pair<std::string, std::string>>& deps, Store* store) {
+std::vector<DepCheck> checkDependencies(
+    const std::vector<std::pair<std::string, std::string>>& deps, Store* store) {
     std::vector<DepCheck> results;
     if (!store) return results;
 
@@ -10,8 +12,7 @@ std::vector<DepCheck> checkDependencies(const std::vector<std::pair<std::string,
         dc.name = name;
         dc.version = version;
         dc.blocked = store->isVersionBlocked(name, version);
-        if (dc.blocked)
-            dc.reason = store->getBlockedReason(name, version);
+        if (dc.blocked) dc.reason = store->getBlockedReason(name, version);
         results.push_back(dc);
     }
     return results;

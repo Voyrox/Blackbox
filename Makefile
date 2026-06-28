@@ -2,7 +2,7 @@ BUILD_DIR = build
 BINARY = $(BUILD_DIR)/blackbox
 PREFIX ?= /usr/local
 
-.PHONY: all test run install clean
+.PHONY: all test run install clean format
 
 all:
 	-cmake -E remove_directory $(BUILD_DIR)
@@ -32,6 +32,9 @@ install: all
 
 test: all
 	cd $(BUILD_DIR) && ctest --output-on-failure
+
+format:
+	clang-format -i src/*.hpp src/*.cpp src/*/*.hpp src/*/*.cpp tests/*.cpp
 
 clean:
 	rm -rf $(BUILD_DIR) dist keys *.db

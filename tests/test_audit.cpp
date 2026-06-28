@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
-#include "audit/lib.hpp"
 
 #include <filesystem>
 #include <string>
+
+#include "audit/lib.hpp"
 
 namespace fs = std::filesystem;
 

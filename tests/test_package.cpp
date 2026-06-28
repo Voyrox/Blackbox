@@ -1,15 +1,16 @@
 #include <gtest/gtest.h>
-#include "package/lib.hpp"
-#include "crypto/lib.hpp"
-#include "store/lib.hpp"
-#include "audit/lib.hpp"
-#include "policy/lib.hpp"
 
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
 #include <string>
+
+#include "audit/lib.hpp"
+#include "crypto/lib.hpp"
+#include "package/lib.hpp"
+#include "policy/lib.hpp"
+#include "store/lib.hpp"
 
 namespace fs = std::filesystem;
 
@@ -70,8 +71,9 @@ protected:
 };
 
 TEST_F(PackageIntegrationTest, FullLifecycle) {
-    ASSERT_EQ(createPackage("test-pkg", "1.0.0", payload_dir.string(),
-                             sbom_path.string(), pkg_path.string()), 0);
+    ASSERT_EQ(createPackage("test-pkg", "1.0.0", payload_dir.string(), sbom_path.string(),
+                            pkg_path.string()),
+              0);
 
     ASSERT_EQ(signPackage(pkg_path.string(), priv_key.string()), 0);
 
@@ -83,13 +85,15 @@ TEST_F(PackageIntegrationTest, FullLifecycle) {
     EXPECT_EQ(store.getBundleStatus("test-pkg", "1.0.0"), "approved");
 
     ASSERT_EQ(store.installPackage("test-pkg", "1.0.0",
-                                    store.getImportedManifestHash("test-pkg", "1.0.0"), ""), 0);
+                                   store.getImportedManifestHash("test-pkg", "1.0.0"), ""),
+              0);
     EXPECT_EQ(store.getInstalledVersion("test-pkg"), "1.0.0");
 }
 
 TEST_F(PackageIntegrationTest, RejectsUnsignedPackage) {
-    ASSERT_EQ(createPackage("test-pkg", "1.0.0", payload_dir.string(),
-                             sbom_path.string(), pkg_path.string()), 0);
+    ASSERT_EQ(createPackage("test-pkg", "1.0.0", payload_dir.string(), sbom_path.string(),
+                            pkg_path.string()),
+              0);
     ASSERT_NE(runImport(), 0);
 }
 
@@ -98,8 +102,9 @@ TEST_F(PackageIntegrationTest, ApproveWithoutImportFails) {
 }
 
 TEST_F(PackageIntegrationTest, BlockedVersionDoesNotPreventImportWithoutDeps) {
-    ASSERT_EQ(createPackage("test-pkg", "1.0.0", payload_dir.string(),
-                             sbom_path.string(), pkg_path.string()), 0);
+    ASSERT_EQ(createPackage("test-pkg", "1.0.0", payload_dir.string(), sbom_path.string(),
+                            pkg_path.string()),
+              0);
     ASSERT_EQ(signPackage(pkg_path.string(), priv_key.string()), 0);
     store.addBlockedVersion("other-lib", "1.0.0", "blocked for test");
     ASSERT_EQ(runImport(), 0);
@@ -107,8 +112,9 @@ TEST_F(PackageIntegrationTest, BlockedVersionDoesNotPreventImportWithoutDeps) {
 }
 
 TEST_F(PackageIntegrationTest, BlockedVersionPreventsInstall) {
-    ASSERT_EQ(createPackage("test-pkg", "1.0.0", payload_dir.string(),
-                             sbom_path.string(), pkg_path.string()), 0);
+    ASSERT_EQ(createPackage("test-pkg", "1.0.0", payload_dir.string(), sbom_path.string(),
+                            pkg_path.string()),
+              0);
     ASSERT_EQ(signPackage(pkg_path.string(), priv_key.string()), 0);
     ASSERT_EQ(runImport(), 0);
     ASSERT_EQ(approvePackage("test-pkg", "1.0.0", &store, &audit), 0);
@@ -119,13 +125,14 @@ TEST_F(PackageIntegrationTest, BlockedVersionPreventsInstall) {
 }
 
 TEST_F(PackageIntegrationTest, DowngradeRejected) {
-    ASSERT_EQ(createPackage("test-pkg", "2.0.0", payload_dir.string(),
-                             sbom_path.string(), pkg_path.string()), 0);
+    ASSERT_EQ(createPackage("test-pkg", "2.0.0", payload_dir.string(), sbom_path.string(),
+                            pkg_path.string()),
+              0);
     ASSERT_EQ(signPackage(pkg_path.string(), priv_key.string()), 0);
     ASSERT_EQ(runImport(), 0);
     ASSERT_EQ(approvePackage("test-pkg", "2.0.0", &store, &audit), 0);
-    store.installPackage("test-pkg", "2.0.0",
-                          store.getImportedManifestHash("test-pkg", "2.0.0"), "");
+    store.installPackage("test-pkg", "2.0.0", store.getImportedManifestHash("test-pkg", "2.0.0"),
+                         "");
 
     store.addImportedBundle("b2", "test-pkg", "1.0.0", "hash", "pending");
 }

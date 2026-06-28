@@ -1,48 +1,71 @@
-#include "package/lib.hpp"
-#include "color.hpp"
-#include "crypto/lib.hpp"
-#include "store/lib.hpp"
-#include "audit/lib.hpp"
-#include "policy/lib.hpp"
-
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iterator>
 #include <string>
 
+#include "audit/lib.hpp"
+#include "color.hpp"
+#include "crypto/lib.hpp"
+#include "package/lib.hpp"
+#include "policy/lib.hpp"
+#include "store/lib.hpp"
+
 static void printUsage() {
     std::cout << "\n";
     std::cout << clr::bold("blackbox") << "  — Secure update manager for air-gapped systems\n";
     std::cout << "\n";
-    std::cout << clr::bold("Usage:") << "  blackbox " << clr::cyan("<command>") << " " << clr::yellow("[options]") << "\n";
+    std::cout << clr::bold("Usage:") << "  blackbox " << clr::cyan("<command>") << " "
+              << clr::yellow("[options]") << "\n";
     std::cout << "\n";
     std::cout << "  " << clr::bold("Key management") << "\n";
-    std::cout << "    " << clr::cyan("keygen") << " --out " << clr::yellow("<dir>") << R"(                                   Generate ECDSA P-256 key pair)" << "\n";
+    std::cout << "    " << clr::cyan("keygen") << " --out " << clr::yellow("<dir>")
+              << R"(                                   Generate ECDSA P-256 key pair)" << "\n";
     std::cout << "\n";
     std::cout << "  " << clr::bold("Package operations") << "\n";
-    std::cout << "    " << clr::cyan("package create") << " --name " << clr::yellow("<name>") << " --version " << clr::yellow("<ver>") << "\n";
-    std::cout << "        --payload " << clr::yellow("<path>") << " --sbom " << clr::yellow("<path>") << " --out " << clr::yellow("<output>") << "    Create a signed package bundle\n";
-    std::cout << "    " << clr::cyan("package sign") << " " << clr::yellow("<pkg>") << " --key " << clr::yellow("<private_key>") << "               Sign an existing package\n";
+    std::cout << "    " << clr::cyan("package create") << " --name " << clr::yellow("<name>")
+              << " --version " << clr::yellow("<ver>") << "\n";
+    std::cout << "        --payload " << clr::yellow("<path>") << " --sbom "
+              << clr::yellow("<path>") << " --out " << clr::yellow("<output>")
+              << "    Create a signed package bundle\n";
+    std::cout << "    " << clr::cyan("package sign") << " " << clr::yellow("<pkg>") << " --key "
+              << clr::yellow("<private_key>") << "               Sign an existing package\n";
     std::cout << "\n";
     std::cout << "  " << clr::bold("Trust management") << "\n";
-    std::cout << "    " << clr::cyan("trust add") << " " << clr::yellow("<pub_key>") << " --name " << clr::yellow("<vendor>") << "                  Add a trusted vendor public key\n";
-    std::cout << "    " << clr::cyan("trust list") << R"(                                           List trusted vendors)" << "\n";
-    std::cout << "    " << clr::cyan("trust remove") << " --name " << clr::yellow("<vendor>") << R"(                         Remove a trusted vendor)" << "\n";
+    std::cout << "    " << clr::cyan("trust add") << " " << clr::yellow("<pub_key>") << " --name "
+              << clr::yellow("<vendor>") << "                  Add a trusted vendor public key\n";
+    std::cout << "    " << clr::cyan("trust list")
+              << R"(                                           List trusted vendors)" << "\n";
+    std::cout << "    " << clr::cyan("trust remove") << " --name " << clr::yellow("<vendor>")
+              << R"(                         Remove a trusted vendor)" << "\n";
     std::cout << "\n";
     std::cout << "  " << clr::bold("Import / Approve / Install") << "\n";
-    std::cout << "    " << clr::cyan("import") << " " << clr::yellow("<pkg>") << R"(                                         Verify and import a package)" << "\n";
-    std::cout << "    " << clr::cyan("approve") << " " << clr::yellow("<name>") << " --version " << clr::yellow("<ver>") << R"(                       Approve a pending bundle for install)" << "\n";
-    std::cout << "    " << clr::cyan("install") << " " << clr::yellow("<name>") << " --version " << clr::yellow("<ver>") << R"(                       Install an approved bundle)" << "\n";
+    std::cout << "    " << clr::cyan("import") << " " << clr::yellow("<pkg>")
+              << R"(                                         Verify and import a package)" << "\n";
+    std::cout << "    " << clr::cyan("approve") << " " << clr::yellow("<name>") << " --version "
+              << clr::yellow("<ver>")
+              << R"(                       Approve a pending bundle for install)" << "\n";
+    std::cout << "    " << clr::cyan("install") << " " << clr::yellow("<name>") << " --version "
+              << clr::yellow("<ver>") << R"(                       Install an approved bundle)"
+              << "\n";
     std::cout << "\n";
     std::cout << "  " << clr::bold("Policy (dependency blocking)") << "\n";
-    std::cout << "    " << clr::cyan("policy block") << " " << clr::yellow("<name>") << " " << clr::yellow("<version>") << " --reason " << clr::yellow("<text>") << "        Block a vulnerable dependency\n";
-    std::cout << "    " << clr::cyan("policy unblock") << " " << clr::yellow("<name>") << " " << clr::yellow("<version>") << R"(                      Unblock a dependency)" << "\n";
-    std::cout << "    " << clr::cyan("policy list") << R"(                                          List blocked versions)" << "\n";
+    std::cout << "    " << clr::cyan("policy block") << " " << clr::yellow("<name>") << " "
+              << clr::yellow("<version>") << " --reason " << clr::yellow("<text>")
+              << "        Block a vulnerable dependency\n";
+    std::cout << "    " << clr::cyan("policy unblock") << " " << clr::yellow("<name>") << " "
+              << clr::yellow("<version>") << R"(                      Unblock a dependency)"
+              << "\n";
+    std::cout << "    " << clr::cyan("policy list")
+              << R"(                                          List blocked versions)" << "\n";
     std::cout << "\n";
     std::cout << "  " << clr::bold("Status & Audit") << "\n";
-    std::cout << "    " << clr::cyan("status") << R"(                                               Show installed packages and imported bundles)" << "\n";
-    std::cout << "    " << clr::cyan("audit verify-chain") << R"(                                   Verify tamper-evident audit chain)" << "\n";
+    std::cout
+        << "    " << clr::cyan("status")
+        << R"(                                               Show installed packages and imported bundles)"
+        << "\n";
+    std::cout << "    " << clr::cyan("audit verify-chain")
+              << R"(                                   Verify tamper-evident audit chain)" << "\n";
     std::cout << "\n";
 }
 
@@ -78,25 +101,29 @@ int main(int argc, char* argv[]) {
     }
 
     if (std::strcmp(argv[1], "package") == 0 && argc >= 3) {
-
         if (std::strcmp(argv[2], "create") == 0) {
             std::string name, version, payload, sbom, out;
             for (int i = 3; i < argc; i++) {
                 if (std::strcmp(argv[i], "--name") == 0) {
                     auto v = getArg(i, argc, argv, "--name");
-                    if (!v) return 1; name = v;
+                    if (!v) return 1;
+                    name = v;
                 } else if (std::strcmp(argv[i], "--version") == 0) {
                     auto v = getArg(i, argc, argv, "--version");
-                    if (!v) return 1; version = v;
+                    if (!v) return 1;
+                    version = v;
                 } else if (std::strcmp(argv[i], "--payload") == 0) {
                     auto v = getArg(i, argc, argv, "--payload");
-                    if (!v) return 1; payload = v;
+                    if (!v) return 1;
+                    payload = v;
                 } else if (std::strcmp(argv[i], "--sbom") == 0) {
                     auto v = getArg(i, argc, argv, "--sbom");
-                    if (!v) return 1; sbom = v;
+                    if (!v) return 1;
+                    sbom = v;
                 } else if (std::strcmp(argv[i], "--out") == 0) {
                     auto v = getArg(i, argc, argv, "--out");
-                    if (!v) return 1; out = v;
+                    if (!v) return 1;
+                    out = v;
                 } else {
                     std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
                     return 1;
@@ -112,7 +139,7 @@ int main(int argc, char* argv[]) {
 
         if (std::strcmp(argv[2], "sign") == 0) {
             if (argc < 4) {
-            std::cerr << clr::red("error:") << " missing package path" << std::endl;
+                std::cerr << clr::red("error:") << " missing package path" << std::endl;
                 return 1;
             }
             std::string pkg_path = argv[3];
@@ -120,7 +147,8 @@ int main(int argc, char* argv[]) {
             for (int i = 4; i < argc; i++) {
                 if (std::strcmp(argv[i], "--key") == 0) {
                     auto v = getArg(i, argc, argv, "--key");
-                    if (!v) return 1; key_path = v;
+                    if (!v) return 1;
+                    key_path = v;
                 } else {
                     std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
                     return 1;
@@ -153,7 +181,8 @@ int main(int argc, char* argv[]) {
 
         if (std::strcmp(argv[2], "add") == 0) {
             if (argc < 4) {
-                std::cerr << clr::red("error:") << " usage: blackbox trust add <pub_key> --name <vendor>" << std::endl;
+                std::cerr << clr::red("error:")
+                          << " usage: blackbox trust add <pub_key> --name <vendor>" << std::endl;
                 return 1;
             }
             std::string key_path = argv[3];
@@ -161,7 +190,8 @@ int main(int argc, char* argv[]) {
             for (int i = 4; i < argc; i++) {
                 if (std::strcmp(argv[i], "--name") == 0) {
                     auto v = getArg(i, argc, argv, "--name");
-                    if (!v) return 1; name = v;
+                    if (!v) return 1;
+                    name = v;
                 } else {
                     std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
                     return 1;
@@ -193,7 +223,8 @@ int main(int argc, char* argv[]) {
             for (int i = 3; i < argc; i++) {
                 if (std::strcmp(argv[i], "--name") == 0) {
                     auto v = getArg(i, argc, argv, "--name");
-                    if (!v) return 1; name = v;
+                    if (!v) return 1;
+                    name = v;
                 } else {
                     std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
                     return 1;
@@ -207,7 +238,8 @@ int main(int argc, char* argv[]) {
                 std::cerr << "error: failed to remove trusted vendor" << std::endl;
                 return 1;
             }
-            std::cout << clr::green("Trusted vendor removed:") << " " << clr::bold(name) << std::endl;
+            std::cout << clr::green("Trusted vendor removed:") << " " << clr::bold(name)
+                      << std::endl;
             return 0;
         }
 
@@ -232,7 +264,8 @@ int main(int argc, char* argv[]) {
 
     if (std::strcmp(argv[1], "install") == 0) {
         if (argc < 4) {
-            std::cerr << clr::red("error:") << " usage: blackbox install <name> --version <ver>" << std::endl;
+            std::cerr << clr::red("error:") << " usage: blackbox install <name> --version <ver>"
+                      << std::endl;
             return 1;
         }
         std::string name = argv[2];
@@ -240,13 +273,14 @@ int main(int argc, char* argv[]) {
         for (int i = 3; i < argc; i++) {
             if (std::strcmp(argv[i], "--version") == 0) {
                 auto v = getArg(i, argc, argv, "--version");
-                if (!v) return 1; version = v;
-                } else {
-                    std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
-                    return 1;
-                }
+                if (!v) return 1;
+                version = v;
+            } else {
+                std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
+                return 1;
             }
-            if (version.empty()) {
+        }
+        if (version.empty()) {
             std::cerr << clr::red("error:") << " --version is required" << std::endl;
             return 1;
         }
@@ -269,8 +303,8 @@ int main(int argc, char* argv[]) {
         std::string status = store.getBundleStatus(name, version);
         if (status != "approved") {
             std::string reason = "not approved";
-            std::cerr << clr::red("error:") << " " << name << " " << version
-                      << " has status '" << status << "'. Run 'blackbox approve' first." << std::endl;
+            std::cerr << clr::red("error:") << " " << name << " " << version << " has status '"
+                      << status << "'. Run 'blackbox approve' first." << std::endl;
             store.rollbackTransaction();
             audit.writeEvent("PACKAGE_INSTALL_REJECTED", name, version, "failed", reason, "");
             return 1;
@@ -280,8 +314,8 @@ int main(int argc, char* argv[]) {
         if (!installed.empty() && versionLessThan(version, installed)) {
             std::string reason = "version " + version + " is older than installed " + installed;
             std::cout << clr::fail("Install rejected: downgrade detected") << std::endl;
-            std::cout << "  " << name << " " << version
-                      << " is older than installed version " << installed << std::endl;
+            std::cout << "  " << name << " " << version << " is older than installed version "
+                      << installed << std::endl;
             store.rollbackTransaction();
             audit.writeEvent("ROLLBACK_BLOCKED", name, version, "failed", reason, "");
             return 1;
@@ -291,7 +325,8 @@ int main(int argc, char* argv[]) {
         store.installPackage(name, version, manifest_hash, installed);
         store.commitTransaction();
 
-        std::cout << clr::green("Installed:") << " " << clr::bold(name + " " + version) << std::endl;
+        std::cout << clr::green("Installed:") << " " << clr::bold(name + " " + version)
+                  << std::endl;
         if (!installed.empty()) {
             std::cout << "  Previous version: " << installed << std::endl;
         }
@@ -301,7 +336,8 @@ int main(int argc, char* argv[]) {
 
     if (std::strcmp(argv[1], "approve") == 0) {
         if (argc < 4) {
-            std::cerr << clr::red("error:") << " usage: blackbox approve <name> --version <ver>" << std::endl;
+            std::cerr << clr::red("error:") << " usage: blackbox approve <name> --version <ver>"
+                      << std::endl;
             return 1;
         }
         std::string name = argv[2];
@@ -309,7 +345,8 @@ int main(int argc, char* argv[]) {
         for (int i = 3; i < argc; i++) {
             if (std::strcmp(argv[i], "--version") == 0) {
                 auto v = getArg(i, argc, argv, "--version");
-                if (!v) return 1; version = v;
+                if (!v) return 1;
+                version = v;
             } else {
                 std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
                 return 1;
@@ -333,7 +370,9 @@ int main(int argc, char* argv[]) {
 
         if (std::strcmp(argv[2], "block") == 0) {
             if (argc < 5) {
-                std::cerr << clr::red("error:") << " usage: blackbox policy block <name> <version> --reason <text>" << std::endl;
+                std::cerr << clr::red("error:")
+                          << " usage: blackbox policy block <name> <version> --reason <text>"
+                          << std::endl;
                 return 1;
             }
             std::string pkg = argv[3];
@@ -342,7 +381,8 @@ int main(int argc, char* argv[]) {
             for (int i = 5; i < argc; i++) {
                 if (std::strcmp(argv[i], "--reason") == 0) {
                     auto v = getArg(i, argc, argv, "--reason");
-                    if (!v) return 1; reason = v;
+                    if (!v) return 1;
+                    reason = v;
                 } else {
                     std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
                     return 1;
@@ -359,7 +399,8 @@ int main(int argc, char* argv[]) {
 
         if (std::strcmp(argv[2], "unblock") == 0) {
             if (argc < 5) {
-                std::cerr << clr::red("error:") << " usage: blackbox policy unblock <name> <version>" << std::endl;
+                std::cerr << clr::red("error:")
+                          << " usage: blackbox policy unblock <name> <version>" << std::endl;
                 return 1;
             }
             std::string pkg = argv[3];
@@ -404,8 +445,7 @@ int main(int argc, char* argv[]) {
             std::cout << "  (none)" << std::endl;
         } else {
             for (const auto& [pkg, ver, prev, at] : installed) {
-                std::cout << "  " << pkg << " " << ver
-                          << " (installed " << at << ")";
+                std::cout << "  " << pkg << " " << ver << " (installed " << at << ")";
                 if (!prev.empty()) std::cout << " [upgraded from " << prev << "]";
                 std::cout << std::endl;
             }
@@ -416,8 +456,8 @@ int main(int argc, char* argv[]) {
             std::cout << "  (none)" << std::endl;
         } else {
             for (const auto& [pkg, ver, st, at] : imported) {
-                std::cout << "  " << pkg << " " << ver
-                          << " [" << st << "] (imported " << at << ")" << std::endl;
+                std::cout << "  " << pkg << " " << ver << " [" << st << "] (imported " << at << ")"
+                          << std::endl;
             }
         }
         return 0;

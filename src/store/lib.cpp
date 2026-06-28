@@ -1,7 +1,9 @@
 #include "lib.hpp"
-#include "crypto/lib.hpp"
+
 #include <iostream>
 #include <sstream>
+
+#include "crypto/lib.hpp"
 
 Store::Store() {}
 
@@ -33,37 +35,41 @@ int Store::open(const std::string& path) {
         return 1;
     }
 
-    exec("CREATE TABLE IF NOT EXISTS installed_versions ("
-         "  package_name TEXT PRIMARY KEY,"
-         "  current_version TEXT NOT NULL,"
-         "  previous_version TEXT,"
-         "  installed_at TEXT NOT NULL,"
-         "  manifest_hash TEXT NOT NULL"
-         ")");
+    exec(
+        "CREATE TABLE IF NOT EXISTS installed_versions ("
+        "  package_name TEXT PRIMARY KEY,"
+        "  current_version TEXT NOT NULL,"
+        "  previous_version TEXT,"
+        "  installed_at TEXT NOT NULL,"
+        "  manifest_hash TEXT NOT NULL"
+        ")");
 
-    exec("CREATE TABLE IF NOT EXISTS blocked_versions ("
-         "  package_name TEXT NOT NULL,"
-         "  version TEXT NOT NULL,"
-         "  reason TEXT NOT NULL,"
-         "  created_at TEXT NOT NULL,"
-         "  PRIMARY KEY (package_name, version)"
-         ")");
+    exec(
+        "CREATE TABLE IF NOT EXISTS blocked_versions ("
+        "  package_name TEXT NOT NULL,"
+        "  version TEXT NOT NULL,"
+        "  reason TEXT NOT NULL,"
+        "  created_at TEXT NOT NULL,"
+        "  PRIMARY KEY (package_name, version)"
+        ")");
 
-    exec("CREATE TABLE IF NOT EXISTS imported_bundles ("
-         "  id TEXT PRIMARY KEY,"
-         "  package_name TEXT NOT NULL,"
-         "  version TEXT NOT NULL,"
-         "  manifest_hash TEXT NOT NULL,"
-         "  status TEXT NOT NULL,"
-         "  imported_at TEXT NOT NULL"
-         ")");
+    exec(
+        "CREATE TABLE IF NOT EXISTS imported_bundles ("
+        "  id TEXT PRIMARY KEY,"
+        "  package_name TEXT NOT NULL,"
+        "  version TEXT NOT NULL,"
+        "  manifest_hash TEXT NOT NULL,"
+        "  status TEXT NOT NULL,"
+        "  imported_at TEXT NOT NULL"
+        ")");
 
-    exec("CREATE TABLE IF NOT EXISTS trusted_vendors ("
-         "  name TEXT PRIMARY KEY,"
-         "  public_key_pem TEXT NOT NULL,"
-         "  fingerprint TEXT NOT NULL,"
-         "  added_at TEXT NOT NULL"
-         ")");
+    exec(
+        "CREATE TABLE IF NOT EXISTS trusted_vendors ("
+        "  name TEXT PRIMARY KEY,"
+        "  public_key_pem TEXT NOT NULL,"
+        "  fingerprint TEXT NOT NULL,"
+        "  added_at TEXT NOT NULL"
+        ")");
 
     return 0;
 }
@@ -76,19 +82,19 @@ bool Store::isVersionBlocked(const std::string& pkg, const std::string& version)
     sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 2, version.c_str(), -1, SQLITE_TRANSIENT);
     int count = 0;
-    if (sqlite3_step(stmt) == SQLITE_ROW)
-        count = sqlite3_column_int(stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_ROW) count = sqlite3_column_int(stmt, 0);
     sqlite3_finalize(stmt);
     return count > 0;
 }
 
 int Store::addImportedBundle(const std::string& id, const std::string& pkg,
-                                const std::string& version, const std::string& manifest_hash,
-                                const std::string& status) {
+                             const std::string& version, const std::string& manifest_hash,
+                             const std::string& status) {
     if (!db_) return 1;
-    std::string sql = "INSERT OR IGNORE INTO imported_bundles "
-                      "(id, package_name, version, manifest_hash, status, imported_at) "
-                      "VALUES (?, ?, ?, ?, ?, datetime('now'))";
+    std::string sql =
+        "INSERT OR IGNORE INTO imported_bundles "
+        "(id, package_name, version, manifest_hash, status, imported_at) "
+        "VALUES (?, ?, ?, ?, ?, datetime('now'))";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, id.c_str(), -1, SQLITE_TRANSIENT);
@@ -107,7 +113,8 @@ int Store::addImportedBundle(const std::string& id, const std::string& pkg,
 
 std::string Store::getImportedManifestHash(const std::string& pkg, const std::string& version) {
     if (!db_) return {};
-    std::string sql = "SELECT manifest_hash FROM imported_bundles WHERE package_name=? AND version=?";
+    std::string sql =
+        "SELECT manifest_hash FROM imported_bundles WHERE package_name=? AND version=?";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
@@ -123,15 +130,15 @@ std::string Store::getImportedManifestHash(const std::string& pkg, const std::st
 
 bool Store::bundleImported(const std::string& pkg, const std::string& version) {
     if (!db_) return false;
-    std::string sql = "SELECT COUNT(*) FROM imported_bundles "
-                      "WHERE package_name=? AND version=?";
+    std::string sql =
+        "SELECT COUNT(*) FROM imported_bundles "
+        "WHERE package_name=? AND version=?";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 2, version.c_str(), -1, SQLITE_TRANSIENT);
     int count = 0;
-    if (sqlite3_step(stmt) == SQLITE_ROW)
-        count = sqlite3_column_int(stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_ROW) count = sqlite3_column_int(stmt, 0);
     sqlite3_finalize(stmt);
     return count > 0;
 }
@@ -152,11 +159,12 @@ std::string Store::getInstalledVersion(const std::string& pkg) {
 }
 
 int Store::installPackage(const std::string& pkg, const std::string& version,
-                            const std::string& manifest_hash, const std::string& previous) {
+                          const std::string& manifest_hash, const std::string& previous) {
     if (!db_) return 1;
-    std::string sql = "INSERT OR REPLACE INTO installed_versions "
-                      "(package_name, current_version, previous_version, installed_at, manifest_hash) "
-                      "VALUES (?, ?, ?, datetime('now'), ?)";
+    std::string sql =
+        "INSERT OR REPLACE INTO installed_versions "
+        "(package_name, current_version, previous_version, installed_at, manifest_hash) "
+        "VALUES (?, ?, ?, datetime('now'), ?)";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
@@ -172,10 +180,13 @@ int Store::installPackage(const std::string& pkg, const std::string& version,
     return 0;
 }
 
-std::vector<std::tuple<std::string, std::string, std::string, std::string>> Store::getAllImported() {
+std::vector<std::tuple<std::string, std::string, std::string, std::string>>
+Store::getAllImported() {
     std::vector<std::tuple<std::string, std::string, std::string, std::string>> result;
     if (!db_) return result;
-    std::string sql = "SELECT package_name, version, status, imported_at FROM imported_bundles ORDER BY imported_at DESC";
+    std::string sql =
+        "SELECT package_name, version, status, imported_at FROM imported_bundles ORDER BY "
+        "imported_at DESC";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -183,19 +194,19 @@ std::vector<std::tuple<std::string, std::string, std::string, std::string>> Stor
         auto ver = (const char*)sqlite3_column_text(stmt, 1);
         auto st = (const char*)sqlite3_column_text(stmt, 2);
         auto at = (const char*)sqlite3_column_text(stmt, 3);
-        result.emplace_back(pkg ? pkg : "", ver ? ver : "",
-                            st ? st : "", at ? at : "");
+        result.emplace_back(pkg ? pkg : "", ver ? ver : "", st ? st : "", at ? at : "");
     }
     sqlite3_finalize(stmt);
     return result;
 }
 
 int Store::addBlockedVersion(const std::string& pkg, const std::string& version,
-                                const std::string& reason) {
+                             const std::string& reason) {
     if (!db_) return 1;
-    std::string sql = "INSERT OR IGNORE INTO blocked_versions "
-                      "(package_name, version, reason, created_at) "
-                      "VALUES (?, ?, ?, datetime('now'))";
+    std::string sql =
+        "INSERT OR IGNORE INTO blocked_versions "
+        "(package_name, version, reason, created_at) "
+        "VALUES (?, ?, ?, datetime('now'))";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
@@ -229,7 +240,8 @@ int Store::removeBlockedVersion(const std::string& pkg, const std::string& versi
 std::vector<std::tuple<std::string, std::string, std::string>> Store::listBlockedVersions() {
     std::vector<std::tuple<std::string, std::string, std::string>> result;
     if (!db_) return result;
-    std::string sql = "SELECT package_name, version, reason FROM blocked_versions ORDER BY package_name, version";
+    std::string sql =
+        "SELECT package_name, version, reason FROM blocked_versions ORDER BY package_name, version";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -259,7 +271,7 @@ std::string Store::getBlockedReason(const std::string& pkg, const std::string& v
 }
 
 int Store::setBundleStatus(const std::string& pkg, const std::string& version,
-                              const std::string& status) {
+                           const std::string& status) {
     if (!db_) return 1;
     std::string sql = "UPDATE imported_bundles SET status=? WHERE package_name=? AND version=?";
     sqlite3_stmt* stmt;
@@ -304,11 +316,13 @@ int Store::rollbackTransaction() {
     return exec("ROLLBACK");
 }
 
-std::vector<std::tuple<std::string, std::string, std::string, std::string>> Store::getAllInstalled() {
+std::vector<std::tuple<std::string, std::string, std::string, std::string>>
+Store::getAllInstalled() {
     std::vector<std::tuple<std::string, std::string, std::string, std::string>> result;
     if (!db_) return result;
-    std::string sql = "SELECT package_name, current_version, previous_version, installed_at "
-                      "FROM installed_versions ORDER BY package_name";
+    std::string sql =
+        "SELECT package_name, current_version, previous_version, installed_at "
+        "FROM installed_versions ORDER BY package_name";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -316,8 +330,7 @@ std::vector<std::tuple<std::string, std::string, std::string, std::string>> Stor
         auto ver = (const char*)sqlite3_column_text(stmt, 1);
         auto prev = (const char*)sqlite3_column_text(stmt, 2);
         auto at = (const char*)sqlite3_column_text(stmt, 3);
-        result.emplace_back(pkg ? pkg : "", ver ? ver : "",
-                            prev ? prev : "", at ? at : "");
+        result.emplace_back(pkg ? pkg : "", ver ? ver : "", prev ? prev : "", at ? at : "");
     }
     sqlite3_finalize(stmt);
     return result;
@@ -326,9 +339,10 @@ std::vector<std::tuple<std::string, std::string, std::string, std::string>> Stor
 int Store::addTrustedVendor(const std::string& name, const std::string& public_key_pem) {
     if (!db_) return 1;
     std::string fp = sha256Data(public_key_pem);
-    std::string sql = "INSERT OR REPLACE INTO trusted_vendors "
-                      "(name, public_key_pem, fingerprint, added_at) "
-                      "VALUES (?, ?, ?, datetime('now'))";
+    std::string sql =
+        "INSERT OR REPLACE INTO trusted_vendors "
+        "(name, public_key_pem, fingerprint, added_at) "
+        "VALUES (?, ?, ?, datetime('now'))";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
@@ -361,7 +375,8 @@ int Store::removeTrustedVendor(const std::string& name) {
 std::vector<TrustedVendor> Store::listTrustedVendors() {
     std::vector<TrustedVendor> result;
     if (!db_) return result;
-    std::string sql = "SELECT name, public_key_pem, fingerprint, added_at FROM trusted_vendors ORDER BY name";
+    std::string sql =
+        "SELECT name, public_key_pem, fingerprint, added_at FROM trusted_vendors ORDER BY name";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     while (sqlite3_step(stmt) == SQLITE_ROW) {

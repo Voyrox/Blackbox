@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "package/lib.hpp"
 
 TEST(VersionTest, EqualVersions) {

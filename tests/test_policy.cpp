@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
-#include "policy/lib.hpp"
-#include "store/lib.hpp"
 
 #include <filesystem>
+
+#include "policy/lib.hpp"
+#include "store/lib.hpp"
 
 namespace fs = std::filesystem;
 
@@ -32,10 +33,8 @@ TEST_F(PolicyTest, AllDepsAllowed) {
     store.addImportedBundle("b1", "libfoo", "1.0.0", "hash", "approved");
     store.addImportedBundle("b2", "libbar", "1.0.0", "hash", "approved");
 
-    std::vector<std::pair<std::string, std::string>> deps = {
-        {"libfoo", "1.0.0"},
-        {"libbar", "1.0.0"}
-    };
+    std::vector<std::pair<std::string, std::string>> deps = {{"libfoo", "1.0.0"},
+                                                             {"libbar", "1.0.0"}};
     auto result = checkDependencies(deps, &store);
     ASSERT_EQ(result.size(), 2);
     EXPECT_FALSE(result[0].blocked);
@@ -45,10 +44,8 @@ TEST_F(PolicyTest, AllDepsAllowed) {
 TEST_F(PolicyTest, BlockedDepDetected) {
     store.addBlockedVersion("evil-lib", "1.0.0", "contains malware");
 
-    std::vector<std::pair<std::string, std::string>> deps = {
-        {"good-lib", "1.0.0"},
-        {"evil-lib", "1.0.0"}
-    };
+    std::vector<std::pair<std::string, std::string>> deps = {{"good-lib", "1.0.0"},
+                                                             {"evil-lib", "1.0.0"}};
     auto result = checkDependencies(deps, &store);
     ASSERT_EQ(result.size(), 2);
     EXPECT_FALSE(result[0].blocked);

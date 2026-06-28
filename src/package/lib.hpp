@@ -25,13 +25,12 @@ std::string iso8601Now();
 bool versionLessThan(const std::string& a, const std::string& b);
 
 int createPackage(const std::string& name, const std::string& version,
-                   const std::string& payload_path, const std::string& sbom_path,
-                   const std::string& output_path);
+                  const std::string& payload_path, const std::string& sbom_path,
+                  const std::string& output_path);
 
 int signPackage(const std::string& pkg_path, const std::string& key_path);
 
-int verifyPackage(const std::string& pkg_path,
-                   Store* store = nullptr, AuditLog* audit = nullptr);
+int verifyPackage(const std::string& pkg_path, Store* store = nullptr, AuditLog* audit = nullptr);
 
-int approvePackage(const std::string& pkg_name, const std::string& version,
-                    Store* store = nullptr, AuditLog* audit = nullptr);
+int approvePackage(const std::string& pkg_name, const std::string& version, Store* store = nullptr,
+                   AuditLog* audit = nullptr);

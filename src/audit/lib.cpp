@@ -1,6 +1,4 @@
 #include "lib.hpp"
-#include "color.hpp"
-#include "crypto/lib.hpp"
 
 #include <chrono>
 #include <ctime>
@@ -8,6 +6,9 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+
+#include "color.hpp"
+#include "crypto/lib.hpp"
 
 AuditLog::AuditLog() {}
 
@@ -39,26 +40,28 @@ int AuditLog::open(const std::string& db_path) {
         return 1;
     }
 
-    exec("CREATE TABLE IF NOT EXISTS audit_log ("
-         "  id TEXT PRIMARY KEY,"
-         "  timestamp TEXT NOT NULL,"
-         "  actor TEXT NOT NULL,"
-         "  action TEXT NOT NULL,"
-         "  package_name TEXT,"
-         "  version TEXT,"
-         "  result TEXT NOT NULL,"
-         "  reason TEXT,"
-         "  metadata_hash TEXT,"
-         "  previous_event_hash TEXT,"
-         "  event_hash TEXT NOT NULL"
-         ")");
+    exec(
+        "CREATE TABLE IF NOT EXISTS audit_log ("
+        "  id TEXT PRIMARY KEY,"
+        "  timestamp TEXT NOT NULL,"
+        "  actor TEXT NOT NULL,"
+        "  action TEXT NOT NULL,"
+        "  package_name TEXT,"
+        "  version TEXT,"
+        "  result TEXT NOT NULL,"
+        "  reason TEXT,"
+        "  metadata_hash TEXT,"
+        "  previous_event_hash TEXT,"
+        "  event_hash TEXT NOT NULL"
+        ")");
 
-    exec("CREATE TABLE IF NOT EXISTS audit_verify_state ("
-         "  id INTEGER PRIMARY KEY CHECK (id = 1),"
-         "  last_event_hash TEXT NOT NULL,"
-         "  event_count INTEGER NOT NULL,"
-         "  verified_at TEXT NOT NULL"
-         ")");
+    exec(
+        "CREATE TABLE IF NOT EXISTS audit_verify_state ("
+        "  id INTEGER PRIMARY KEY CHECK (id = 1),"
+        "  last_event_hash TEXT NOT NULL,"
+        "  event_count INTEGER NOT NULL,"
+        "  verified_at TEXT NOT NULL"
+        ")");
 
     return 0;
 }
@@ -78,19 +81,18 @@ std::string AuditLog::getLastHash() {
 }
 
 std::string AuditLog::computeEventHash(const std::string& ts, const std::string& actor,
-                                           const std::string& action, const std::string& pkg,
-                                           const std::string& ver, const std::string& result,
-                                           const std::string& reason, const std::string& meta_hash,
-                                           const std::string& prev_hash) {
-    std::string data = ts + "|" + actor + "|" + action + "|" +
-                       pkg + "|" + ver + "|" + result + "|" +
-                       reason + "|" + meta_hash + "|" + prev_hash;
+                                       const std::string& action, const std::string& pkg,
+                                       const std::string& ver, const std::string& result,
+                                       const std::string& reason, const std::string& meta_hash,
+                                       const std::string& prev_hash) {
+    std::string data = ts + "|" + actor + "|" + action + "|" + pkg + "|" + ver + "|" + result +
+                       "|" + reason + "|" + meta_hash + "|" + prev_hash;
     return sha256Data(data);
 }
 
 int AuditLog::writeEvent(const std::string& action, const std::string& package_name,
-                           const std::string& version, const std::string& result,
-                           const std::string& reason, const std::string& metadata_hash) {
+                         const std::string& version, const std::string& result,
+                         const std::string& reason, const std::string& metadata_hash) {
     if (!db_) return 1;
 
     auto now = std::chrono::system_clock::now();
@@ -106,14 +108,15 @@ int AuditLog::writeEvent(const std::string& action, const std::string& package_n
 
     std::string actor = "admin";
     std::string prev_hash = getLastHash();
-    std::string event_hash = computeEventHash(ts.str(), actor, action,
-                                                 package_name, version, result,
-                                                 reason, metadata_hash, prev_hash);
+    std::string event_hash = computeEventHash(ts.str(), actor, action, package_name, version,
+                                              result, reason, metadata_hash, prev_hash);
     std::string id = "AUDIT-" + event_hash.substr(0, 6);
 
-    std::string sql = "INSERT INTO audit_log "
-                      "(id, timestamp, actor, action, package_name, version, result, reason, metadata_hash, previous_event_hash, event_hash) "
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    std::string sql =
+        "INSERT INTO audit_log "
+        "(id, timestamp, actor, action, package_name, version, result, reason, metadata_hash, "
+        "previous_event_hash, event_hash) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, id.c_str(), -1, SQLITE_TRANSIENT);
@@ -140,9 +143,10 @@ int AuditLog::writeEvent(const std::string& action, const std::string& package_n
 }
 
 int AuditLog::initVerifyState() {
-    std::string sql = "INSERT OR IGNORE INTO audit_verify_state "
-                      "(id, last_event_hash, event_count, verified_at) "
-                      "VALUES (1, '', 0, '1970-01-01T00:00:00Z')";
+    std::string sql =
+        "INSERT OR IGNORE INTO audit_verify_state "
+        "(id, last_event_hash, event_count, verified_at) "
+        "VALUES (1, '', 0, '1970-01-01T00:00:00Z')";
     return exec(sql);
 }
 
@@ -165,8 +169,9 @@ int AuditLog::loadVerifyState(std::string& last_hash, int& count) {
 
 int AuditLog::saveVerifyState(const std::string& last_hash, int count) {
     if (!db_) return 1;
-    std::string sql = "UPDATE audit_verify_state SET last_event_hash=?, event_count=?, "
-                      "verified_at=datetime('now') WHERE id=1";
+    std::string sql =
+        "UPDATE audit_verify_state SET last_event_hash=?, event_count=?, "
+        "verified_at=datetime('now') WHERE id=1";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, last_hash.c_str(), -1, SQLITE_TRANSIENT);
@@ -194,8 +199,7 @@ int AuditLog::verifyChain() {
         std::string count_sql = "SELECT COUNT(*) FROM audit_log";
         sqlite3_stmt* cstmt;
         sqlite3_prepare_v2(db_, count_sql.c_str(), -1, &cstmt, nullptr);
-        if (sqlite3_step(cstmt) == SQLITE_ROW)
-            cur_count = sqlite3_column_int(cstmt, 0);
+        if (sqlite3_step(cstmt) == SQLITE_ROW) cur_count = sqlite3_column_int(cstmt, 0);
         sqlite3_finalize(cstmt);
 
         if (cur_count > prev_count) {
@@ -204,7 +208,8 @@ int AuditLog::verifyChain() {
                       << " event(s) appended since last verification" << std::endl;
         } else if (cur_count < prev_count) {
             tampered_since_verify = true;
-            std::cout << clr::fail("Tamper detected:") << " events removed since last verification" << std::endl;
+            std::cout << clr::fail("Tamper detected:") << " events removed since last verification"
+                      << std::endl;
         }
 
         std::string saved_ts;
@@ -218,13 +223,15 @@ int AuditLog::verifyChain() {
         sqlite3_finalize(ts_stmt);
 
         if (tampered_since_verify) {
-            std::cout << "  Last verified: " << (saved_ts.empty() ? "never" : saved_ts) << std::endl;
+            std::cout << "  Last verified: " << (saved_ts.empty() ? "never" : saved_ts)
+                      << std::endl;
         }
     }
 
-    std::string sql = "SELECT timestamp, actor, action, package_name, version, result, reason, "
-                      "metadata_hash, previous_event_hash, event_hash, rowid "
-                      "FROM audit_log ORDER BY rowid ASC";
+    std::string sql =
+        "SELECT timestamp, actor, action, package_name, version, result, reason, "
+        "metadata_hash, previous_event_hash, event_hash, rowid "
+        "FROM audit_log ORDER BY rowid ASC";
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
 
@@ -258,12 +265,12 @@ int AuditLog::verifyChain() {
         if (s_stored_prev != expected_prev) {
             chain_valid = false;
             std::cout << "Chain break at " << s_ts << ": "
-                      << "expected previous hash " << expected_prev
-                      << " but got " << s_stored_prev << std::endl;
+                      << "expected previous hash " << expected_prev << " but got " << s_stored_prev
+                      << std::endl;
         }
 
-        std::string computed = computeEventHash(s_ts, s_actor, s_action, s_pkg, s_ver,
-                                                   s_result, s_reason, s_meta, s_stored_prev);
+        std::string computed = computeEventHash(s_ts, s_actor, s_action, s_pkg, s_ver, s_result,
+                                                s_reason, s_meta, s_stored_prev);
         if (computed != s_stored_hash) {
             chain_valid = false;
             std::cout << "Hash mismatch at " << s_ts << std::endl;
@@ -283,7 +290,8 @@ int AuditLog::verifyChain() {
         std::cout << "Audit chain   " << clr::ok("valid") << std::endl;
         std::cout << "Events        " << checked << std::endl;
     } else if (chain_valid && tampered_since_verify) {
-        std::cout << "Audit chain   " << clr::yellow("valid (tamper detected since last verify)") << std::endl;
+        std::cout << "Audit chain   " << clr::yellow("valid (tamper detected since last verify)")
+                  << std::endl;
         std::cout << "Events        " << checked << std::endl;
     } else {
         std::cout << "Audit chain   " << clr::fail("INVALID") << std::endl;

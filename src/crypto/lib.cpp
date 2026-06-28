@@ -1,15 +1,17 @@
 #include "lib.hpp"
-#include "color.hpp"
-#include <openssl/evp.h>
-#include <openssl/pem.h>
+
 #include <openssl/bio.h>
 #include <openssl/err.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
 
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <vector>
+
+#include "color.hpp"
 
 static std::string toHex(const unsigned char* hash, size_t len) {
     std::ostringstream out;
@@ -94,7 +96,8 @@ int generateKeypair(const std::string& priv_path, const std::string& pub_path) {
     return 0;
 }
 
-int signFile(const std::string& file_path, const std::string& key_path, const std::string& sig_path) {
+int signFile(const std::string& file_path, const std::string& key_path,
+             const std::string& sig_path) {
     std::ifstream file(file_path, std::ios::binary);
     if (!file) {
         std::cerr << "error: cannot read " << file_path << std::endl;
@@ -141,7 +144,8 @@ int signFile(const std::string& file_path, const std::string& key_path, const st
     return 0;
 }
 
-bool verifyFile(const std::string& file_path, const std::string& sig_path, const std::string& pub_key_path) {
+bool verifyFile(const std::string& file_path, const std::string& sig_path,
+                const std::string& pub_key_path) {
     std::ifstream file(file_path, std::ios::binary);
     if (!file) {
         std::cerr << "error: cannot read " << file_path << std::endl;
@@ -190,7 +194,8 @@ bool verifyFile(const std::string& file_path, const std::string& sig_path, const
     return ret == 1;
 }
 
-bool verifyFileWithKey(const std::string& file_path, const std::string& sig_path, const std::string& pub_key_pem) {
+bool verifyFileWithKey(const std::string& file_path, const std::string& sig_path,
+                       const std::string& pub_key_pem) {
     std::ifstream file(file_path, std::ios::binary);
     if (!file) return false;
 
@@ -201,7 +206,10 @@ bool verifyFileWithKey(const std::string& file_path, const std::string& sig_path
     if (!pkey) return false;
 
     FILE* sf = fopen(sig_path.c_str(), "rb");
-    if (!sf) { EVP_PKEY_free(pkey); return false; }
+    if (!sf) {
+        EVP_PKEY_free(pkey);
+        return false;
+    }
     fseek(sf, 0, SEEK_END);
     long sig_len = ftell(sf);
     fseek(sf, 0, SEEK_SET);
