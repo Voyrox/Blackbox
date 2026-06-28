@@ -285,6 +285,8 @@ blackbox db verify
 
 `status` lists installed packages and imported bundles. `audit verify-chain` cryptographically checks every audit event links to the one before it. `db verify` checks the audit chain and compares the current table state against the last recorded audit hash.
 
+DB-backed commands also run this integrity check automatically before they make changes. If the tables were modified outside the normal audited workflow, the command stops and tells you to run `blackbox db verify`.
+
 ---
 
 ## Example Walkthrough
