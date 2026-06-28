@@ -262,7 +262,7 @@ func TestCommitTransactionPersists(t *testing.T) {
 }
 
 func TestTempDirEnv(t *testing.T) {
-    // Verify we can create a temp DB
+    
     path := filepath.Join(t.TempDir(), "test.db")
     s, err := Open(path)
     if err != nil {

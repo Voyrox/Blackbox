@@ -290,6 +290,68 @@ func (s *Store) ListTrustedVendors() ([]TrustedVendor, error) {
     return result, rows.Err()
 }
 
+func (s *Store) HashState() (string, error) {
+	h := sha256.New()
+
+	vendors, err := s.ListTrustedVendors()
+	if err != nil {
+		return "", err
+	}
+	for _, v := range vendors {
+		fmt.Fprintf(h, "vendor:%s|%s|%s|%s\n", v.Name, v.PublicKeyPEM, v.Fingerprint, v.AddedAt)
+	}
+
+	rows, err := s.db.Query(`SELECT id, package_name, version, manifest_hash, status, imported_at FROM imported_bundles ORDER BY id`)
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id, pkg, ver, mh, st, ia string
+		if err := rows.Scan(&id, &pkg, &ver, &mh, &st, &ia); err != nil {
+			return "", err
+		}
+		fmt.Fprintf(h, "bundle:%s|%s|%s|%s|%s|%s\n", id, pkg, ver, mh, st, ia)
+	}
+	if err := rows.Err(); err != nil {
+		return "", err
+	}
+
+	rows2, err := s.db.Query(`SELECT package_name, current_version, previous_version, installed_at FROM installed_versions ORDER BY package_name`)
+	if err != nil {
+		return "", err
+	}
+	defer rows2.Close()
+	for rows2.Next() {
+		var pn, cv, pv, ia string
+		if err := rows2.Scan(&pn, &cv, &pv, &ia); err != nil {
+			return "", err
+		}
+		fmt.Fprintf(h, "installed:%s|%s|%s|%s\n", pn, cv, pv, ia)
+	}
+	if err := rows2.Err(); err != nil {
+		return "", err
+	}
+
+	rows3, err := s.db.Query(`SELECT package_name, version, reason, blocked_at FROM blocked_versions ORDER BY package_name, version`)
+	if err != nil {
+		return "", err
+	}
+	defer rows3.Close()
+	for rows3.Next() {
+		var pn, ver, reason, ba string
+		if err := rows3.Scan(&pn, &ver, &reason, &ba); err != nil {
+			return "", err
+		}
+		fmt.Fprintf(h, "blocked:%s|%s|%s|%s\n", pn, ver, reason, ba)
+	}
+	if err := rows3.Err(); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
+}
+
 func (s *Store) GetAllVendorKeys() ([]struct{ Name, PublicKeyPEM string }, error) {
     rows, err := s.db.Query(`SELECT name, public_key_pem FROM trusted_vendors`)
     if err != nil {

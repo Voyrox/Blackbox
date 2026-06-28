@@ -20,13 +20,13 @@ Signed package management for offline environments. Verify, approve, and install
 
 ## Overview
 
-`blackbox` is a CLI tool for managing the lifecycle of signed software packages in air-gapped (offline/isolated) networks. It provides an end-to-end workflow:
+`blackbox` is a CLI tool for managing signed software packages across air-gapped networks. It handles the full lifecycle:
 
 1. **Build environment** (connected): generate ECDSA P-256 keys, create signed `.agpkg` bundles with embedded SBOMs
 2. **Physical transfer** (USB / optical disc): carry the bundle across the air gap
 3. **Target environment** (offline): verify, approve, and install with rollback protection and policy enforcement
 
-All trust is rooted in a local database — vendor public keys are pre-loaded by an operator, never passed as a flag. Every operation is logged to a SQLite audit chain that cryptographically links each event to the previous one, making tampering detectable.
+Trust lives in a local database. Vendor public keys get pre-loaded by an operator, never passed as a flag. Every operation goes into a SQLite audit chain that cryptographically links each entry to the last, so tampering shows up straight away.
 
 ---
 
@@ -47,51 +47,96 @@ All trust is rooted in a local database — vendor public keys are pre-loaded by
 
 ```mermaid
 flowchart LR
-    subgraph BuildEnv["Build Environment (connected)"]
+    subgraph Build["Build Environment (connected)"]
         direction TB
-        Keygen["Key Generation<br/><small>ECDSA P-256</small>"]
-        Builder["Package Builder"]
-        Signer["Package Signer"]
-        Keygen --> Builder
-        Builder --> Signer
+        Keygen["Key Generation"] --> Builder["Package Builder"]
+        Builder --> Signer["Package Signer"]
     end
 
-    Transfer["Physical Transfer<br/><small>USB / optical disc</small>"]
+    Transfer["Physical Transfer<br/>(USB / optical disc)"]
 
-    subgraph TargetEnv["Target Environment (air-gapped)"]
+    subgraph Server["Air-Gapped Server"]
         direction TB
         CLI["CLI"]
-        Trust["Vendor Trust Store<br/><small>pre-loaded public keys</small>"]
+        Trust["Vendor Trust Store"]
+        Verifier["Verifier<br/>signature → hash → expiry → rollback → policy → approval"]
+        DBs["SQLite Store"]
+        Audit["Audit Chain"]
+        Install["Installer"]
 
-        subgraph Verify["Verifier"]
-            SigCheck["Signature Check<br/><small>iterates trusted vendors</small>"]
-            HashCheck["Payload + SBOM Hash Check"]
-            ExpiryCheck["Metadata Expiry Check"]
-            RollbackCheck["Rollback Guard<br/><small>version comparison</small>"]
-            PolicyCheck["Policy Check<br/><small>blocked dependencies</small>"]
-            StatusGate["Approval Gate<br/><small>pending -> approved</small>"]
-        end
-
-        DBs["Local Store<br/><small>SQLite</small>"]
-        Audit["Audit Log<br/><small>Tamper-evident chain</small>"]
-        Installer["Installer<br/><small>atomic transaction</small>"]
-
-        Trust --> SigCheck
-        CLI --> SigCheck
-        SigCheck --> HashCheck
-        HashCheck --> ExpiryCheck
-        ExpiryCheck --> RollbackCheck
-        RollbackCheck --> PolicyCheck
-        PolicyCheck --> StatusGate
-        StatusGate --> DBs
-        StatusGate --> Audit
-        StatusGate --> Installer
-        Installer --> DBs
-        Installer --> Audit
+        Trust --> Verifier
+        CLI --> Verifier
+        Verifier --> DBs
+        Verifier --> Audit
+        Verifier --> Install
+        Install --> DBs
+        Install --> Audit
     end
 
-    Signer -- ".agpkg + .sig" --> Transfer
+    Signer --> Transfer
     Transfer --> CLI
+```
+
+### Verification flow
+
+```mermaid
+flowchart TB
+    Pkg[".agpkg bundle"] --> Extract["Extract manifest"]
+
+    subgraph Commands["CLI Commands"]
+    Inspect["inspect"]
+    VerifyCmd["verify"]
+    ImportCmd["import (staged)"]
+    ApproveCmd["approve"]
+    InstallCmd["install <pkg>"]
+    end
+
+    subgraph Keys["Trust Store"]
+        K1["Vendor A key"]
+        K2["Vendor B key"]
+        K3["Vendor C key"]
+    end
+
+    Extract --> Inspect
+    Inspect -->|reads| Meta["Display metadata<br/>no verification"]
+
+    Extract --> VerifyCmd
+    VerifyCmd --> Pipe1["Full verification pipeline"]
+
+    Extract --> ImportCmd
+    ImportCmd --> Pipe2["Full verification pipeline"]
+
+    Extract --> InstallCmd
+    InstallCmd --> Pipe3["Full verification pipeline"]
+
+    subgraph Pipe["Verification Pipeline"]
+        S1["1. Signature"]
+        S2["2. Hashes"]
+        S3["3. Expiry"]
+        S4["4. Rollback"]
+        S5["5. Policy"]
+    end
+
+    Keys --> S1
+    Pipe1 --> S1
+    Pipe2 --> S1
+    Pipe3 --> S1
+    S1 --> S2 --> S3 --> S4 --> S5
+
+    S5 -->|verify: pass/fail| Result["Dry-run result<br/>no DB writes"]
+
+    S5 -->|import: all pass| Pending["Stored: pending"]
+    S5 -->|import: any fail| Reject
+
+    Pending --> ApproveCmd
+    ApproveCmd -->|status| Approved["Stored: approved"]
+
+    Approved --> InstallNameCmd["install &lt;name&gt;<br/>--version &lt;ver&gt;"]
+    InstallNameCmd -->|status| Installed["Stored: installed"]
+    InstallNameCmd -->|not approved| Reject
+
+    S5 -->|install &lt;pkg&gt;: all pass| Installed
+    S5 -->|install &lt;pkg&gt;: any fail| Reject
 ```
 
 ### Verification checks
@@ -127,49 +172,37 @@ flowchart LR
 
 ## Quick Start
 
+On the **air-gapped server**, you only need two commands:
+
 ```sh
-make run
+blackbox trust add vendor.pub --name "Vendor Name"
+blackbox install firmware.agpkg
 ```
 
-Builds the tool and runs a full workflow: key generation → package creation → signing → trust setup → import → approval → install → status check.
+That's it. The `install` command verifies the signature against trusted vendors, checks hashes, expiry, rollback, and policies, then records it as installed. All in one step.
 
----
+*(On the connected build machine, see [Build](#build) and the [Example Walkthrough](#example-walkthrough) for creating and signing packages.)*
 
 ## Build
 
 ```sh
 make
 ```
-
-Or directly:
-
-```sh
-go build -o blackbox .
-```
-
 ### Run tests
-
 ```sh
 make test          # or: go test ./... -v
 ```
-
 ### Cross-compile
-
 ```sh
 GOOS=linux GOARCH=arm64 go build -o blackbox .
 GOOS=windows GOARCH=amd64 go build -o blackbox.exe .
 ```
 
----
-
 ## Install
 
 ```sh
-# Copy the binary to your PATH
-sudo cp blackbox /usr/local/bin/
+make install
 ```
-
-No runtime dependencies required — it's a single static binary.
 
 ---
 
@@ -202,19 +235,35 @@ blackbox trust list
 blackbox trust remove --name <vendor>
 ```
 
-Vendor public keys are stored in the local database. The `trust add` command shows a SHA-256 fingerprint — verify this out-of-band (compare against the vendor's website, documentation, or signed email) before trusting.
+Vendor public keys live in the local database. `trust add` prints a SHA-256 fingerprint. Verify this out-of-band (check against the vendor's website, docs, or a signed email) before you trust it.
 
-### Import / Approve / Install
+### Package subcommands
 
 ```sh
-blackbox import <pkg>
-blackbox approve <name> --version <ver>
-blackbox install <name> --version <ver>
+blackbox package inspect <pkg>
+blackbox package verify <pkg>
+blackbox package import <pkg>
+blackbox package install <pkg>
+blackbox package install <name> --version <ver>
 ```
 
-`import` verifies the package signature against all trusted vendor keys, checks payload hash, SBOM hash, expiry, and blocked dependencies. If no trusted vendor key matches, import fails.
+`package inspect` reads the `.agpkg` manifest and shows all fields (name, version, hashes, expiry, dependencies).
 
-`approve` transitions a bundle from `pending` to `approved`. `install` applies the approved bundle atomically and blocks downgrades.
+`package verify` runs the full verification pipeline (signature against trusted vendors, payload/SBOM hashes, expiry, rollback, dependency policy) as a dry run. No database writes, no audit events.
+
+`package import` verifies the package and, on success, writes it to the local store with `pending` status. Use `approve` then `install` to finish.
+
+`package install <pkg>` runs the whole workflow in one step: verify, import (as approved), and record the install. This is the normal way to install a package. The `<name> --version <ver>` form installs a bundle that was already imported via `import` + `approve`.
+
+### Approve (staged workflow only)
+
+```sh
+blackbox approve <name> --version <ver>
+```
+
+Moves a bundle from `pending` to `approved`. Only needed if you imported separately instead of using `install <pkg>`.
+
+**Legacy aliases:** `blackbox import` and `blackbox install <pkg>` still work.
 
 ### Policy (dependency blocking)
 
@@ -224,16 +273,17 @@ blackbox policy unblock <name> <version>
 blackbox policy list
 ```
 
-Block known-vulnerable dependencies. Any import referencing a blocked package+version combination is rejected.
+Block known-vulnerable dependencies. Any import referencing a blocked package+version combo gets rejected.
 
 ### Status & Audit
 
 ```sh
 blackbox status
 blackbox audit verify-chain
+blackbox db verify
 ```
 
-`status` lists installed packages and imported bundles. `audit verify-chain` cryptographically verifies every audit event links to the previous one, detecting tampering.
+`status` lists installed packages and imported bundles. `audit verify-chain` cryptographically checks every audit event links to the one before it. `db verify` checks the audit chain and compares the current table state against the last recorded audit hash.
 
 ---
 
@@ -262,34 +312,56 @@ Trusted vendor added: Internal Dev
   Fingerprint: 10665c8e26104588cb57b557d351c4db004a5790c34dcd2299fd9be21113eb52
   (verify this fingerprint with the vendor out-of-band)
 
-$ blackbox import dist/ics-firmware-v2-2.3.1.agpkg
+$ blackbox package inspect dist/ics-firmware-v2-2.3.1.agpkg
+╭──────────────────┬──────────────────────────────────────────────────╮
+│ FIELD            │ VALUE                                           │
+├──────────────────┼──────────────────────────────────────────────────┤
+│ Package          │ ics-firmware-v2                                 │
+│ Version          │ 2.3.1                                           │
+│ Payload Hash     │ sha256:9d5b9601133cc61b64591bb9f8adb9787f74... │
+│ SBOM Hash        │ sha256:3fd5535252ca51a62de1b0a672c98a4c830e... │
+│ Expires At       │ 2026-09-26T11:18:09Z                            │
+│ Dependencies     │                                                 │
+╰──────────────────┴──────────────────────────────────────────────────╯
 
-  Signature    ✓ valid (Internal Dev)
-  Bundle       ics-firmware-v2 2.3.1
-  Payload hash ✓ valid
-  SBOM         ✓ present
-  SBOM hash    ✓ valid
-  Expiry       ✓ valid
-  Rollback     ✓ passed
-  Dependencies ✓ all clear
+$ blackbox package verify dist/ics-firmware-v2-2.3.1.agpkg
+╭──────────────┬──────────────────┬─────────────────────╮
+│ CHECK        │ RESULT           │ DETAIL              │
+├──────────────┼──────────────────┼─────────────────────┤
+│ Signature    │ ✓ valid          │ (Internal Dev)      │
+│ Bundle       │                  │ ics-firmware-v2 2.3.1 │
+│ Payload hash │ ✓ valid          │                     │
+│ SBOM         │ ✓ present        │                     │
+│ SBOM hash    │ ✓ valid          │                     │
+│ Expiry       │ ✓ valid          │                     │
+│ Rollback     │ ✓ passed         │                     │
+│ Dependencies │ ✓ all clear      │                     │
+╰──────────────┴──────────────────┴─────────────────────╯
+  ✓ Status: verification passed
 
-  ✓ Status: imported and pending approval
-Audit: AUDIT-322d20f
+$ blackbox install dist/ics-firmware-v2-2.3.1.agpkg
+╭──────────────┬─────────────┬───────────────────────╮
+│ CHECK        │ RESULT      │ DETAIL                │
+├──────────────┼─────────────┼───────────────────────┤
+│ Signature    │ ✓ valid     │ (Internal Dev)        │
+│ Bundle       │             │ ics-firmware-v2 2.3.1 │
+│ Payload hash │ ✓ valid     │                       │
+│ SBOM         │ ✓ present   │                       │
+│ SBOM hash    │ ✓ valid     │                       │
+│ Expiry       │ ✓ valid     │                       │
+│ Rollback     │ ✓ passed    │                       │
+│ Dependencies │ ✓ all clear │                       │
+╰──────────────┴─────────────┴───────────────────────╯
 
-$ blackbox approve ics-firmware-v2 --version 2.3.1
-Approved: ics-firmware-v2 2.3.1
-Audit: AUDIT-9266c53
-
-$ blackbox install ics-firmware-v2 --version 2.3.1
 Installed: ics-firmware-v2 2.3.1
-Audit: AUDIT-1c9eddb
+Audit: AUDIT-6e3aec2
 
 $ blackbox status
 Installed packages:
-  ics-firmware-v2 2.3.1 (installed 2026-06-28 11:18:18)
+  ics-firmware-v2 2.3.1 (installed 2026-06-28 12:33:07)
 
 Imported bundles:
-  ics-firmware-v2 2.3.1 [approved] (imported 2026-06-28 11:18:12)
+  ics-firmware-v2 2.3.1 [approved] (imported 2026-06-28 12:33:07)
 
 $ blackbox trust list
 Trusted vendors:
@@ -334,11 +406,3 @@ metadata/
 | `expires_at`              | ISO 8601 expiry timestamp (default: +90d)  |
 
 Signatures are stored alongside as `<package>.agpkg.sig` (raw ECDSA P-256 signature).
-
----
-
-## Configuration
-
-`blackbox` uses a local SQLite database (`airgap.db`) for package state, trust store, audit log, and policy rules. The database path is currently hardcoded to `airgap.db` in the working directory. Future versions will support a configurable path via environment variable or config file.
-
-No other configuration files are required.

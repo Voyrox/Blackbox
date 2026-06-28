@@ -127,6 +127,99 @@ func HashPayload(dir string) (string, error) {
     return hashDir(dir)
 }
 
+func ReadFileFromArchive(pkgPath, filePath string) ([]byte, error) {
+    f, err := os.Open(pkgPath)
+    if err != nil {
+        return nil, fmt.Errorf("open package: %w", err)
+    }
+    defer f.Close()
+
+    gr, err := gzip.NewReader(f)
+    if err != nil {
+        return nil, fmt.Errorf("gzip reader: %w", err)
+    }
+    defer gr.Close()
+
+    tr := tar.NewReader(gr)
+    for {
+        hdr, err := tr.Next()
+        if err == io.EOF {
+            break
+        }
+        if err != nil {
+            return nil, fmt.Errorf("tar read: %w", err)
+        }
+        if hdr.Name == filePath {
+            data, err := io.ReadAll(tr)
+            if err != nil {
+                return nil, fmt.Errorf("read %s: %w", filePath, err)
+            }
+            return data, nil
+        }
+    }
+    return nil, fmt.Errorf("%s not found in archive", filePath)
+}
+
+func HashArchiveDir(pkgPath, dirPrefix string) (string, error) {
+    f, err := os.Open(pkgPath)
+    if err != nil {
+        return "", fmt.Errorf("open package: %w", err)
+    }
+    defer f.Close()
+
+    gr, err := gzip.NewReader(f)
+    if err != nil {
+        return "", fmt.Errorf("gzip reader: %w", err)
+    }
+    defer gr.Close()
+
+    prefix := dirPrefix
+    if !strings.HasSuffix(prefix, "/") {
+        prefix += "/"
+    }
+
+    type tarEntry struct {
+        name string
+        data []byte
+    }
+    var entries []tarEntry
+
+    tr := tar.NewReader(gr)
+    for {
+        hdr, err := tr.Next()
+        if err == io.EOF {
+            break
+        }
+        if err != nil {
+            return "", fmt.Errorf("tar read: %w", err)
+        }
+        if strings.HasPrefix(hdr.Name, prefix) && hdr.Typeflag == tar.TypeReg {
+            data, err := io.ReadAll(tr)
+            if err != nil {
+                return "", fmt.Errorf("read %s: %w", hdr.Name, err)
+            }
+            rel := filepath.FromSlash(strings.TrimPrefix(hdr.Name, prefix))
+            entries = append(entries, tarEntry{rel, data})
+        }
+    }
+
+    
+    for i := 0; i < len(entries); i++ {
+        for j := i + 1; j < len(entries); j++ {
+            if entries[i].name > entries[j].name {
+                entries[i], entries[j] = entries[j], entries[i]
+            }
+        }
+    }
+
+    h := sha256.New()
+    for _, e := range entries {
+        h.Write([]byte(e.name))
+        h.Write(e.data)
+    }
+    return fmt.Sprintf("%x", h.Sum(nil)), nil
+}
+
 func readManifestFile(path string) (*Manifest, error) {
     data, err := os.ReadFile(path)
     if err != nil {

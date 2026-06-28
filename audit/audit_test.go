@@ -94,7 +94,7 @@ func TestTamperDetection(t *testing.T) {
     a.WriteEvent("actor", "ACTION", "pkg", "1.0", "success", "", "")
     a.WriteEvent("actor", "ACTION2", "pkg", "1.0", "success", "", "")
 
-    // Tamper with the first event's action
+    
     a.db.Exec(`UPDATE audit_events SET action = 'TAMPERED' WHERE id = 1`)
 
     valid, _, _ := a.VerifyChain()

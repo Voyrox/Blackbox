@@ -112,7 +112,7 @@ func TestCreatePackageHashMatches(t *testing.T) {
     CreatePackage("pkg", "1.0.0", payloadDir, sbomPath, outputPath)
     m, _ := ReadManifest(outputPath)
 
-    // Hash payload independently and compare
+    
     expectedPayloadHash, _ := HashPayload(payloadDir)
     if m.PayloadHash != "sha256:"+expectedPayloadHash {
         t.Errorf("payload_hash = %s, want sha256:%s", m.PayloadHash, expectedPayloadHash)
