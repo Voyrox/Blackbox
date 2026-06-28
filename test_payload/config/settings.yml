@@ -1,2 +1,23 @@
-debug: true
-log_level: info
+# ICS Firmware v2 configuration
+device_id: PLC-042
+controller: Siemens S7-1500
+protocol: profinet
+
+telemetry:
+  enabled: true
+  interval_sec: 30
+  endpoint: https://telemetry.internal/ingest
+
+logging:
+  level: warn
+  file: /var/log/ics-firmware/agent.log
+
+watchdog:
+  timeout_sec: 5
+  auto_reboot: true
+
+security:
+  tls_verify: true
+  allow_unsigned: false
+  trusted_keys:
+    - /opt/ics-firmware/keys/release.pub

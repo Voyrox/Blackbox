@@ -57,6 +57,13 @@ int Store::open(const std::string& path) {
          "  imported_at TEXT NOT NULL"
          ")");
 
+    exec("CREATE TABLE IF NOT EXISTS trusted_vendors ("
+         "  name TEXT PRIMARY KEY,"
+         "  public_key_pem TEXT NOT NULL,"
+         "  fingerprint TEXT NOT NULL,"
+         "  added_at TEXT NOT NULL"
+         ")");
+
     return 0;
 }
 

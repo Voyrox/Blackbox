@@ -8,7 +8,7 @@ all:
 	cmake --build $(BUILD_DIR)
 
 run: all
-	mkdir -p keys dist
+	cmake -E make_directory keys dist
 	$(BINARY) keygen --out keys
 	$(BINARY) package create \
 		--name ics-firmware-v2 \

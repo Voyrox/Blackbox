@@ -1,10 +1,10 @@
-Start testing: Jun 28 16:10 AUS Eastern Standard Time
+Start testing: Jun 28 16:26 AUS Eastern Standard Time
 ----------------------------------------------------------
 1/43 Testing: PackageIntegrationTest.FullLifecycle
 1/43 Test: PackageIntegrationTest.FullLifecycle
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PackageIntegrationTest.FullLifecycle" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PackageIntegrationTest.FullLifecycle" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.FullLifecycle" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -32,20 +32,20 @@ Note: Google Test filter = PackageIntegrationTest.FullLifecycle
   Dependencies [32m✓ all clear[0m
 
   [32m✓ Status: imported and pending approval[0m
-[36mAudit:[0m AUDIT-275b37
+[36mAudit:[0m AUDIT-5bf4b9
 [32mApproved:[0m [1mtest-pkg 1.0.0[0m
-[36mAudit:[0m AUDIT-ab5b21
-[       OK ] PackageIntegrationTest.FullLifecycle (99 ms)
-[----------] 1 test from PackageIntegrationTest (99 ms total)
+[36mAudit:[0m AUDIT-52a7bd
+[       OK ] PackageIntegrationTest.FullLifecycle (174 ms)
+[----------] 1 test from PackageIntegrationTest (174 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (99 ms total)
+[==========] 1 test from 1 test suite ran. (174 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.11 sec
+Test time =   0.19 sec
 ----------------------------------------------------------
 Test Passed.
-"PackageIntegrationTest.FullLifecycle" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.FullLifecycle" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PackageIntegrationTest.FullLifecycle" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -53,7 +53,7 @@ Test Passed.
 2/43 Test: PackageIntegrationTest.RejectsUnsignedPackage
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PackageIntegrationTest.RejectsUnsignedPackage" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PackageIntegrationTest.RejectsUnsignedPackage" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.RejectsUnsignedPackage" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -82,18 +82,18 @@ error: cannot read C:\Users\ewen\AppData\Local\Temp\airgapctl_pkg_test\test-pkg-
 
   [31m✗ Status: rejected[0m
     - [31minvalid signature[0m
-[36mAudit:[0m AUDIT-009670
-[       OK ] PackageIntegrationTest.RejectsUnsignedPackage (30 ms)
-[----------] 1 test from PackageIntegrationTest (30 ms total)
+[36mAudit:[0m AUDIT-a31731
+[       OK ] PackageIntegrationTest.RejectsUnsignedPackage (29 ms)
+[----------] 1 test from PackageIntegrationTest (29 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (30 ms total)
+[==========] 1 test from 1 test suite ran. (29 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.04 sec
 ----------------------------------------------------------
 Test Passed.
-"PackageIntegrationTest.RejectsUnsignedPackage" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.RejectsUnsignedPackage" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PackageIntegrationTest.RejectsUnsignedPackage" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -101,7 +101,7 @@ Test Passed.
 3/43 Test: PackageIntegrationTest.ApproveWithoutImportFails
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PackageIntegrationTest.ApproveWithoutImportFails" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PackageIntegrationTest.ApproveWithoutImportFails" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.ApproveWithoutImportFails" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -114,7 +114,7 @@ Note: Google Test filter = PackageIntegrationTest.ApproveWithoutImportFails
   Private: [36mC:\Users\ewen\AppData\Local\Temp\airgapctl_pkg_test\release.key[0m
   Public:  [36mC:\Users\ewen\AppData\Local\Temp\airgapctl_pkg_test\release.key.pub[0m
 [31merror:[0m nonexistent 1.0.0 has not been imported. Run 'airgapctl import' first.
-[       OK ] PackageIntegrationTest.ApproveWithoutImportFails (23 ms)
+[       OK ] PackageIntegrationTest.ApproveWithoutImportFails (24 ms)
 [----------] 1 test from PackageIntegrationTest (24 ms total)
 
 [----------] Global test environment tear-down
@@ -124,7 +124,7 @@ Note: Google Test filter = PackageIntegrationTest.ApproveWithoutImportFails
 Test time =   0.04 sec
 ----------------------------------------------------------
 Test Passed.
-"PackageIntegrationTest.ApproveWithoutImportFails" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.ApproveWithoutImportFails" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PackageIntegrationTest.ApproveWithoutImportFails" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -132,7 +132,7 @@ Test Passed.
 4/43 Test: PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -160,18 +160,18 @@ Note: Google Test filter = PackageIntegrationTest.BlockedVersionDoesNotPreventIm
   Dependencies [32m✓ all clear[0m
 
   [32m✓ Status: imported and pending approval[0m
-[36mAudit:[0m AUDIT-275b37
-[       OK ] PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps (38 ms)
-[----------] 1 test from PackageIntegrationTest (38 ms total)
+[36mAudit:[0m AUDIT-5bf4b9
+[       OK ] PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps (48 ms)
+[----------] 1 test from PackageIntegrationTest (48 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (38 ms total)
+[==========] 1 test from 1 test suite ran. (48 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.05 sec
+Test time =   0.06 sec
 ----------------------------------------------------------
 Test Passed.
-"PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PackageIntegrationTest.BlockedVersionDoesNotPreventImportWithoutDeps" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -179,7 +179,7 @@ Test Passed.
 5/43 Test: PackageIntegrationTest.BlockedVersionPreventsInstall
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PackageIntegrationTest.BlockedVersionPreventsInstall" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PackageIntegrationTest.BlockedVersionPreventsInstall" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.BlockedVersionPreventsInstall" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -207,20 +207,20 @@ Note: Google Test filter = PackageIntegrationTest.BlockedVersionPreventsInstall
   Dependencies [32m✓ all clear[0m
 
   [32m✓ Status: imported and pending approval[0m
-[36mAudit:[0m AUDIT-275b37
+[36mAudit:[0m AUDIT-5bf4b9
 [32mApproved:[0m [1mtest-pkg 1.0.0[0m
-[36mAudit:[0m AUDIT-ab5b21
-[       OK ] PackageIntegrationTest.BlockedVersionPreventsInstall (48 ms)
-[----------] 1 test from PackageIntegrationTest (48 ms total)
+[36mAudit:[0m AUDIT-52a7bd
+[       OK ] PackageIntegrationTest.BlockedVersionPreventsInstall (51 ms)
+[----------] 1 test from PackageIntegrationTest (51 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (48 ms total)
+[==========] 1 test from 1 test suite ran. (51 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.06 sec
 ----------------------------------------------------------
 Test Passed.
-"PackageIntegrationTest.BlockedVersionPreventsInstall" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.BlockedVersionPreventsInstall" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PackageIntegrationTest.BlockedVersionPreventsInstall" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -228,7 +228,7 @@ Test Passed.
 6/43 Test: PackageIntegrationTest.DowngradeRejected
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PackageIntegrationTest.DowngradeRejected" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PackageIntegrationTest.DowngradeRejected" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.DowngradeRejected" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -256,20 +256,20 @@ Note: Google Test filter = PackageIntegrationTest.DowngradeRejected
   Dependencies [32m✓ all clear[0m
 
   [32m✓ Status: imported and pending approval[0m
-[36mAudit:[0m AUDIT-ab4e76
+[36mAudit:[0m AUDIT-6c9dad
 [32mApproved:[0m [1mtest-pkg 2.0.0[0m
-[36mAudit:[0m AUDIT-8f1351
-[       OK ] PackageIntegrationTest.DowngradeRejected (58 ms)
-[----------] 1 test from PackageIntegrationTest (58 ms total)
+[36mAudit:[0m AUDIT-210b32
+[       OK ] PackageIntegrationTest.DowngradeRejected (90 ms)
+[----------] 1 test from PackageIntegrationTest (90 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (58 ms total)
+[==========] 1 test from 1 test suite ran. (90 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.07 sec
+Test time =   0.10 sec
 ----------------------------------------------------------
 Test Passed.
-"PackageIntegrationTest.DowngradeRejected" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PackageIntegrationTest.DowngradeRejected" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PackageIntegrationTest.DowngradeRejected" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -277,7 +277,7 @@ Test Passed.
 7/43 Test: PolicyTest.NoDependenciesReturnsEmpty
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PolicyTest.NoDependenciesReturnsEmpty" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PolicyTest.NoDependenciesReturnsEmpty" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.NoDependenciesReturnsEmpty" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -286,17 +286,17 @@ Note: Google Test filter = PolicyTest.NoDependenciesReturnsEmpty
 [----------] Global test environment set-up.
 [----------] 1 test from PolicyTest
 [ RUN      ] PolicyTest.NoDependenciesReturnsEmpty
-[       OK ] PolicyTest.NoDependenciesReturnsEmpty (12 ms)
-[----------] 1 test from PolicyTest (12 ms total)
+[       OK ] PolicyTest.NoDependenciesReturnsEmpty (13 ms)
+[----------] 1 test from PolicyTest (13 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (12 ms total)
+[==========] 1 test from 1 test suite ran. (13 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"PolicyTest.NoDependenciesReturnsEmpty" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.NoDependenciesReturnsEmpty" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PolicyTest.NoDependenciesReturnsEmpty" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -304,7 +304,7 @@ Test Passed.
 8/43 Test: PolicyTest.AllDepsAllowed
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PolicyTest.AllDepsAllowed" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PolicyTest.AllDepsAllowed" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.AllDepsAllowed" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -313,17 +313,17 @@ Note: Google Test filter = PolicyTest.AllDepsAllowed
 [----------] Global test environment set-up.
 [----------] 1 test from PolicyTest
 [ RUN      ] PolicyTest.AllDepsAllowed
-[       OK ] PolicyTest.AllDepsAllowed (18 ms)
-[----------] 1 test from PolicyTest (18 ms total)
+[       OK ] PolicyTest.AllDepsAllowed (19 ms)
+[----------] 1 test from PolicyTest (19 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (18 ms total)
+[==========] 1 test from 1 test suite ran. (19 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"PolicyTest.AllDepsAllowed" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.AllDepsAllowed" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PolicyTest.AllDepsAllowed" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -331,7 +331,7 @@ Test Passed.
 9/43 Test: PolicyTest.BlockedDepDetected
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PolicyTest.BlockedDepDetected" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PolicyTest.BlockedDepDetected" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.BlockedDepDetected" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -350,7 +350,7 @@ Note: Google Test filter = PolicyTest.BlockedDepDetected
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"PolicyTest.BlockedDepDetected" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.BlockedDepDetected" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PolicyTest.BlockedDepDetected" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -358,7 +358,7 @@ Test Passed.
 10/43 Test: PolicyTest.NullStoreReturnsEmpty
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PolicyTest.NullStoreReturnsEmpty" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PolicyTest.NullStoreReturnsEmpty" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.NullStoreReturnsEmpty" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -367,17 +367,17 @@ Note: Google Test filter = PolicyTest.NullStoreReturnsEmpty
 [----------] Global test environment set-up.
 [----------] 1 test from PolicyTest
 [ RUN      ] PolicyTest.NullStoreReturnsEmpty
-[       OK ] PolicyTest.NullStoreReturnsEmpty (11 ms)
-[----------] 1 test from PolicyTest (11 ms total)
+[       OK ] PolicyTest.NullStoreReturnsEmpty (12 ms)
+[----------] 1 test from PolicyTest (12 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (11 ms total)
+[==========] 1 test from 1 test suite ran. (12 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"PolicyTest.NullStoreReturnsEmpty" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.NullStoreReturnsEmpty" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PolicyTest.NullStoreReturnsEmpty" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -385,7 +385,7 @@ Test Passed.
 11/43 Test: PolicyTest.BlockedVersionDifferentVersionNotAffected
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=PolicyTest.BlockedVersionDifferentVersionNotAffected" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"PolicyTest.BlockedVersionDifferentVersionNotAffected" start time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.BlockedVersionDifferentVersionNotAffected" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -394,17 +394,17 @@ Note: Google Test filter = PolicyTest.BlockedVersionDifferentVersionNotAffected
 [----------] Global test environment set-up.
 [----------] 1 test from PolicyTest
 [ RUN      ] PolicyTest.BlockedVersionDifferentVersionNotAffected
-[       OK ] PolicyTest.BlockedVersionDifferentVersionNotAffected (14 ms)
-[----------] 1 test from PolicyTest (14 ms total)
+[       OK ] PolicyTest.BlockedVersionDifferentVersionNotAffected (15 ms)
+[----------] 1 test from PolicyTest (15 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (14 ms total)
+[==========] 1 test from 1 test suite ran. (15 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"PolicyTest.BlockedVersionDifferentVersionNotAffected" end time: Jun 28 16:10 AUS Eastern Standard Time
+"PolicyTest.BlockedVersionDifferentVersionNotAffected" end time: Jun 28 16:26 AUS Eastern Standard Time
 "PolicyTest.BlockedVersionDifferentVersionNotAffected" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -412,7 +412,7 @@ Test Passed.
 12/43 Test: AuditTest.OpenCreatesTables
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=AuditTest.OpenCreatesTables" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"AuditTest.OpenCreatesTables" start time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.OpenCreatesTables" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -431,7 +431,7 @@ Note: Google Test filter = AuditTest.OpenCreatesTables
 Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"AuditTest.OpenCreatesTables" end time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.OpenCreatesTables" end time: Jun 28 16:26 AUS Eastern Standard Time
 "AuditTest.OpenCreatesTables" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -439,7 +439,7 @@ Test Passed.
 13/43 Test: AuditTest.WriteEvent
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=AuditTest.WriteEvent" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"AuditTest.WriteEvent" start time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.WriteEvent" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -448,18 +448,18 @@ Note: Google Test filter = AuditTest.WriteEvent
 [----------] Global test environment set-up.
 [----------] 1 test from AuditTest
 [ RUN      ] AuditTest.WriteEvent
-[36mAudit:[0m AUDIT-adcba1
+[36mAudit:[0m AUDIT-e529db
 [       OK ] AuditTest.WriteEvent (12 ms)
 [----------] 1 test from AuditTest (12 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (13 ms total)
+[==========] 1 test from 1 test suite ran. (12 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"AuditTest.WriteEvent" end time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.WriteEvent" end time: Jun 28 16:26 AUS Eastern Standard Time
 "AuditTest.WriteEvent" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -467,7 +467,7 @@ Test Passed.
 14/43 Test: AuditTest.VerifyEmptyChain
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=AuditTest.VerifyEmptyChain" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"AuditTest.VerifyEmptyChain" start time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.VerifyEmptyChain" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -487,7 +487,7 @@ Audit chain   [33m(empty)[0m
 Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"AuditTest.VerifyEmptyChain" end time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.VerifyEmptyChain" end time: Jun 28 16:26 AUS Eastern Standard Time
 "AuditTest.VerifyEmptyChain" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -495,7 +495,7 @@ Test Passed.
 15/43 Test: AuditTest.VerifyChainSingleEvent
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=AuditTest.VerifyChainSingleEvent" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"AuditTest.VerifyChainSingleEvent" start time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.VerifyChainSingleEvent" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -504,20 +504,20 @@ Note: Google Test filter = AuditTest.VerifyChainSingleEvent
 [----------] Global test environment set-up.
 [----------] 1 test from AuditTest
 [ RUN      ] AuditTest.VerifyChainSingleEvent
-[36mAudit:[0m AUDIT-3f56e8
+[36mAudit:[0m AUDIT-ccbc49
 Audit chain   [32m✓ valid[0m
 Events        1
-[       OK ] AuditTest.VerifyChainSingleEvent (19 ms)
-[----------] 1 test from AuditTest (19 ms total)
+[       OK ] AuditTest.VerifyChainSingleEvent (18 ms)
+[----------] 1 test from AuditTest (18 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (19 ms total)
+[==========] 1 test from 1 test suite ran. (18 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"AuditTest.VerifyChainSingleEvent" end time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.VerifyChainSingleEvent" end time: Jun 28 16:26 AUS Eastern Standard Time
 "AuditTest.VerifyChainSingleEvent" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -525,7 +525,7 @@ Test Passed.
 16/43 Test: AuditTest.VerifyChainMultipleEvents
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=AuditTest.VerifyChainMultipleEvents" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"AuditTest.VerifyChainMultipleEvents" start time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.VerifyChainMultipleEvents" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -534,9 +534,9 @@ Note: Google Test filter = AuditTest.VerifyChainMultipleEvents
 [----------] Global test environment set-up.
 [----------] 1 test from AuditTest
 [ RUN      ] AuditTest.VerifyChainMultipleEvents
-[36mAudit:[0m AUDIT-0bc5bb
-[36mAudit:[0m AUDIT-bf6b95
-[36mAudit:[0m AUDIT-af4a38
+[36mAudit:[0m AUDIT-5086d7
+[36mAudit:[0m AUDIT-bfe5e5
+[36mAudit:[0m AUDIT-a0c337
 Audit chain   [32m✓ valid[0m
 Events        3
 [       OK ] AuditTest.VerifyChainMultipleEvents (25 ms)
@@ -549,7 +549,7 @@ Events        3
 Test time =   0.04 sec
 ----------------------------------------------------------
 Test Passed.
-"AuditTest.VerifyChainMultipleEvents" end time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.VerifyChainMultipleEvents" end time: Jun 28 16:26 AUS Eastern Standard Time
 "AuditTest.VerifyChainMultipleEvents" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -557,7 +557,7 @@ Test Passed.
 17/43 Test: AuditTest.TamperDetectionAppendedEvents
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=AuditTest.TamperDetectionAppendedEvents" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"AuditTest.TamperDetectionAppendedEvents" start time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.TamperDetectionAppendedEvents" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -566,13 +566,13 @@ Note: Google Test filter = AuditTest.TamperDetectionAppendedEvents
 [----------] Global test environment set-up.
 [----------] 1 test from AuditTest
 [ RUN      ] AuditTest.TamperDetectionAppendedEvents
-[36mAudit:[0m AUDIT-0bc5bb
-[36mAudit:[0m AUDIT-bf6b95
+[36mAudit:[0m AUDIT-5086d7
+[36mAudit:[0m AUDIT-bfe5e5
 Audit chain   [32m✓ valid[0m
 Events        2
-[36mAudit:[0m AUDIT-af4a38
+[36mAudit:[0m AUDIT-a0c337
 [33mWarning:[0m 1 event(s) appended since last verification
-  Last verified: 2026-06-28 06:10:23
+  Last verified: 2026-06-28 06:26:17
 Audit chain   [33mvalid (tamper detected since last verify)[0m
 Events        3
 [       OK ] AuditTest.TamperDetectionAppendedEvents (28 ms)
@@ -585,7 +585,7 @@ Events        3
 Test time =   0.04 sec
 ----------------------------------------------------------
 Test Passed.
-"AuditTest.TamperDetectionAppendedEvents" end time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.TamperDetectionAppendedEvents" end time: Jun 28 16:26 AUS Eastern Standard Time
 "AuditTest.TamperDetectionAppendedEvents" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -593,7 +593,7 @@ Test Passed.
 18/43 Test: AuditTest.TamperDetectionRemovedEvents
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=AuditTest.TamperDetectionRemovedEvents" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"AuditTest.TamperDetectionRemovedEvents" start time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.TamperDetectionRemovedEvents" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -602,21 +602,21 @@ Note: Google Test filter = AuditTest.TamperDetectionRemovedEvents
 [----------] Global test environment set-up.
 [----------] 1 test from AuditTest
 [ RUN      ] AuditTest.TamperDetectionRemovedEvents
-[36mAudit:[0m AUDIT-0bc5bb
-[36mAudit:[0m AUDIT-758f48
+[36mAudit:[0m AUDIT-5086d7
+[36mAudit:[0m AUDIT-bfe5e5
 Audit chain   [32m✓ valid[0m
 Events        2
-[       OK ] AuditTest.TamperDetectionRemovedEvents (494 ms)
-[----------] 1 test from AuditTest (494 ms total)
+[       OK ] AuditTest.TamperDetectionRemovedEvents (22 ms)
+[----------] 1 test from AuditTest (22 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (494 ms total)
+[==========] 1 test from 1 test suite ran. (22 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.51 sec
+Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"AuditTest.TamperDetectionRemovedEvents" end time: Jun 28 16:10 AUS Eastern Standard Time
+"AuditTest.TamperDetectionRemovedEvents" end time: Jun 28 16:26 AUS Eastern Standard Time
 "AuditTest.TamperDetectionRemovedEvents" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -624,7 +624,7 @@ Test Passed.
 19/43 Test: StoreTest.OpenCreatesTables
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.OpenCreatesTables" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.OpenCreatesTables" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.OpenCreatesTables" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -643,7 +643,7 @@ Note: Google Test filter = StoreTest.OpenCreatesTables
 Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.OpenCreatesTables" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.OpenCreatesTables" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.OpenCreatesTables" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -651,7 +651,7 @@ Test Passed.
 20/43 Test: StoreTest.AddAndCheckImportedBundle
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.AddAndCheckImportedBundle" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.AddAndCheckImportedBundle" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.AddAndCheckImportedBundle" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -660,17 +660,17 @@ Note: Google Test filter = StoreTest.AddAndCheckImportedBundle
 [----------] Global test environment set-up.
 [----------] 1 test from StoreTest
 [ RUN      ] StoreTest.AddAndCheckImportedBundle
-[       OK ] StoreTest.AddAndCheckImportedBundle (14 ms)
-[----------] 1 test from StoreTest (14 ms total)
+[       OK ] StoreTest.AddAndCheckImportedBundle (16 ms)
+[----------] 1 test from StoreTest (16 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (14 ms total)
+[==========] 1 test from 1 test suite ran. (16 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.AddAndCheckImportedBundle" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.AddAndCheckImportedBundle" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.AddAndCheckImportedBundle" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -678,7 +678,7 @@ Test Passed.
 21/43 Test: StoreTest.GetImportedManifestHash
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.GetImportedManifestHash" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.GetImportedManifestHash" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.GetImportedManifestHash" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -687,8 +687,8 @@ Note: Google Test filter = StoreTest.GetImportedManifestHash
 [----------] Global test environment set-up.
 [----------] 1 test from StoreTest
 [ RUN      ] StoreTest.GetImportedManifestHash
-[       OK ] StoreTest.GetImportedManifestHash (14 ms)
-[----------] 1 test from StoreTest (14 ms total)
+[       OK ] StoreTest.GetImportedManifestHash (15 ms)
+[----------] 1 test from StoreTest (15 ms total)
 
 [----------] Global test environment tear-down
 [==========] 1 test from 1 test suite ran. (15 ms total)
@@ -697,7 +697,7 @@ Note: Google Test filter = StoreTest.GetImportedManifestHash
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.GetImportedManifestHash" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.GetImportedManifestHash" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.GetImportedManifestHash" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -705,7 +705,7 @@ Test Passed.
 22/43 Test: StoreTest.SetAndGetBundleStatus
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.SetAndGetBundleStatus" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.SetAndGetBundleStatus" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.SetAndGetBundleStatus" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -714,7 +714,7 @@ Note: Google Test filter = StoreTest.SetAndGetBundleStatus
 [----------] Global test environment set-up.
 [----------] 1 test from StoreTest
 [ RUN      ] StoreTest.SetAndGetBundleStatus
-[       OK ] StoreTest.SetAndGetBundleStatus (17 ms)
+[       OK ] StoreTest.SetAndGetBundleStatus (18 ms)
 [----------] 1 test from StoreTest (18 ms total)
 
 [----------] Global test environment tear-down
@@ -724,7 +724,7 @@ Note: Google Test filter = StoreTest.SetAndGetBundleStatus
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.SetAndGetBundleStatus" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.SetAndGetBundleStatus" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.SetAndGetBundleStatus" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -732,7 +732,7 @@ Test Passed.
 23/43 Test: StoreTest.InstallAndGetVersion
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.InstallAndGetVersion" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.InstallAndGetVersion" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.InstallAndGetVersion" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -741,17 +741,17 @@ Note: Google Test filter = StoreTest.InstallAndGetVersion
 [----------] Global test environment set-up.
 [----------] 1 test from StoreTest
 [ RUN      ] StoreTest.InstallAndGetVersion
-[       OK ] StoreTest.InstallAndGetVersion (18 ms)
-[----------] 1 test from StoreTest (18 ms total)
+[       OK ] StoreTest.InstallAndGetVersion (17 ms)
+[----------] 1 test from StoreTest (17 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (18 ms total)
+[==========] 1 test from 1 test suite ran. (17 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.InstallAndGetVersion" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.InstallAndGetVersion" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.InstallAndGetVersion" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -759,7 +759,7 @@ Test Passed.
 24/43 Test: StoreTest.InstallUpgradePreservesPrevious
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.InstallUpgradePreservesPrevious" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.InstallUpgradePreservesPrevious" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.InstallUpgradePreservesPrevious" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -768,17 +768,17 @@ Note: Google Test filter = StoreTest.InstallUpgradePreservesPrevious
 [----------] Global test environment set-up.
 [----------] 1 test from StoreTest
 [ RUN      ] StoreTest.InstallUpgradePreservesPrevious
-[       OK ] StoreTest.InstallUpgradePreservesPrevious (23 ms)
-[----------] 1 test from StoreTest (23 ms total)
+[       OK ] StoreTest.InstallUpgradePreservesPrevious (24 ms)
+[----------] 1 test from StoreTest (24 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (23 ms total)
+[==========] 1 test from 1 test suite ran. (24 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.InstallUpgradePreservesPrevious" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.InstallUpgradePreservesPrevious" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.InstallUpgradePreservesPrevious" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -786,7 +786,7 @@ Test Passed.
 25/43 Test: StoreTest.GetAllImported
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.GetAllImported" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.GetAllImported" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.GetAllImported" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -799,13 +799,13 @@ Note: Google Test filter = StoreTest.GetAllImported
 [----------] 1 test from StoreTest (17 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (18 ms total)
+[==========] 1 test from 1 test suite ran. (17 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.GetAllImported" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.GetAllImported" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.GetAllImported" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -813,7 +813,7 @@ Test Passed.
 26/43 Test: StoreTest.IsVersionBlockedInitially
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.IsVersionBlockedInitially" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.IsVersionBlockedInitially" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.IsVersionBlockedInitially" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -822,17 +822,17 @@ Note: Google Test filter = StoreTest.IsVersionBlockedInitially
 [----------] Global test environment set-up.
 [----------] 1 test from StoreTest
 [ RUN      ] StoreTest.IsVersionBlockedInitially
-[       OK ] StoreTest.IsVersionBlockedInitially (11 ms)
-[----------] 1 test from StoreTest (11 ms total)
+[       OK ] StoreTest.IsVersionBlockedInitially (12 ms)
+[----------] 1 test from StoreTest (12 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (11 ms total)
+[==========] 1 test from 1 test suite ran. (12 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.IsVersionBlockedInitially" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.IsVersionBlockedInitially" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.IsVersionBlockedInitially" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -840,7 +840,7 @@ Test Passed.
 27/43 Test: StoreTest.BlockAndUnblockVersion
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.BlockAndUnblockVersion" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.BlockAndUnblockVersion" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.BlockAndUnblockVersion" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -849,17 +849,17 @@ Note: Google Test filter = StoreTest.BlockAndUnblockVersion
 [----------] Global test environment set-up.
 [----------] 1 test from StoreTest
 [ RUN      ] StoreTest.BlockAndUnblockVersion
-[       OK ] StoreTest.BlockAndUnblockVersion (17 ms)
-[----------] 1 test from StoreTest (17 ms total)
+[       OK ] StoreTest.BlockAndUnblockVersion (18 ms)
+[----------] 1 test from StoreTest (18 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (17 ms total)
+[==========] 1 test from 1 test suite ran. (18 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.BlockAndUnblockVersion" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.BlockAndUnblockVersion" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.BlockAndUnblockVersion" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -867,7 +867,7 @@ Test Passed.
 28/43 Test: StoreTest.ListBlockedVersions
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.ListBlockedVersions" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.ListBlockedVersions" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.ListBlockedVersions" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -876,17 +876,17 @@ Note: Google Test filter = StoreTest.ListBlockedVersions
 [----------] Global test environment set-up.
 [----------] 1 test from StoreTest
 [ RUN      ] StoreTest.ListBlockedVersions
-[       OK ] StoreTest.ListBlockedVersions (17 ms)
-[----------] 1 test from StoreTest (17 ms total)
+[       OK ] StoreTest.ListBlockedVersions (18 ms)
+[----------] 1 test from StoreTest (18 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (17 ms total)
+[==========] 1 test from 1 test suite ran. (18 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.ListBlockedVersions" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.ListBlockedVersions" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.ListBlockedVersions" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -894,7 +894,7 @@ Test Passed.
 29/43 Test: StoreTest.RollbackTransactionOnFailure
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.RollbackTransactionOnFailure" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.RollbackTransactionOnFailure" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.RollbackTransactionOnFailure" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -913,7 +913,7 @@ Note: Google Test filter = StoreTest.RollbackTransactionOnFailure
 Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.RollbackTransactionOnFailure" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.RollbackTransactionOnFailure" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.RollbackTransactionOnFailure" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -921,7 +921,7 @@ Test Passed.
 30/43 Test: StoreTest.CommitTransactionPersists
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=StoreTest.CommitTransactionPersists" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"StoreTest.CommitTransactionPersists" start time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.CommitTransactionPersists" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -937,10 +937,10 @@ Note: Google Test filter = StoreTest.CommitTransactionPersists
 [==========] 1 test from 1 test suite ran. (14 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.03 sec
+Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"StoreTest.CommitTransactionPersists" end time: Jun 28 16:10 AUS Eastern Standard Time
+"StoreTest.CommitTransactionPersists" end time: Jun 28 16:26 AUS Eastern Standard Time
 "StoreTest.CommitTransactionPersists" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -948,7 +948,7 @@ Test Passed.
 31/43 Test: CryptoTest.Sha256DataKnownValues
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=CryptoTest.Sha256DataKnownValues" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"CryptoTest.Sha256DataKnownValues" start time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.Sha256DataKnownValues" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -967,7 +967,7 @@ Note: Google Test filter = CryptoTest.Sha256DataKnownValues
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"CryptoTest.Sha256DataKnownValues" end time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.Sha256DataKnownValues" end time: Jun 28 16:26 AUS Eastern Standard Time
 "CryptoTest.Sha256DataKnownValues" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -975,7 +975,7 @@ Test Passed.
 32/43 Test: CryptoTest.Sha256DataConsistency
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=CryptoTest.Sha256DataConsistency" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"CryptoTest.Sha256DataConsistency" start time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.Sha256DataConsistency" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -994,7 +994,7 @@ Note: Google Test filter = CryptoTest.Sha256DataConsistency
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"CryptoTest.Sha256DataConsistency" end time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.Sha256DataConsistency" end time: Jun 28 16:26 AUS Eastern Standard Time
 "CryptoTest.Sha256DataConsistency" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1002,7 +1002,7 @@ Test Passed.
 33/43 Test: CryptoTest.Sha256File
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=CryptoTest.Sha256File" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"CryptoTest.Sha256File" start time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.Sha256File" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1021,7 +1021,7 @@ Note: Google Test filter = CryptoTest.Sha256File
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"CryptoTest.Sha256File" end time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.Sha256File" end time: Jun 28 16:26 AUS Eastern Standard Time
 "CryptoTest.Sha256File" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1029,7 +1029,7 @@ Test Passed.
 34/43 Test: CryptoTest.Sha256FileNotFound
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=CryptoTest.Sha256FileNotFound" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"CryptoTest.Sha256FileNotFound" start time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.Sha256FileNotFound" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1048,7 +1048,7 @@ Note: Google Test filter = CryptoTest.Sha256FileNotFound
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"CryptoTest.Sha256FileNotFound" end time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.Sha256FileNotFound" end time: Jun 28 16:26 AUS Eastern Standard Time
 "CryptoTest.Sha256FileNotFound" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1056,7 +1056,7 @@ Test Passed.
 35/43 Test: CryptoTest.KeygenSignVerify
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=CryptoTest.KeygenSignVerify" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"CryptoTest.KeygenSignVerify" start time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.KeygenSignVerify" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1070,17 +1070,17 @@ Note: Google Test filter = CryptoTest.KeygenSignVerify
   Public:  [36mC:\Users\ewen\AppData\Local\Temp\airgapctl_crypto_test\test.key.pub[0m
 [32mSignature:[0m C:\Users\ewen\AppData\Local\Temp\airgapctl_crypto_test\data.bin.sig
 error: cannot read C:\Users\ewen\AppData\Local\Temp\airgapctl_crypto_test\data.bin.sig.nonexistent
-[       OK ] CryptoTest.KeygenSignVerify (14 ms)
-[----------] 1 test from CryptoTest (14 ms total)
+[       OK ] CryptoTest.KeygenSignVerify (15 ms)
+[----------] 1 test from CryptoTest (15 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (14 ms total)
+[==========] 1 test from 1 test suite ran. (15 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"CryptoTest.KeygenSignVerify" end time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.KeygenSignVerify" end time: Jun 28 16:26 AUS Eastern Standard Time
 "CryptoTest.KeygenSignVerify" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1088,7 +1088,7 @@ Test Passed.
 36/43 Test: CryptoTest.VerifyTamperedFile
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=CryptoTest.VerifyTamperedFile" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"CryptoTest.VerifyTamperedFile" start time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.VerifyTamperedFile" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1111,7 +1111,7 @@ Note: Google Test filter = CryptoTest.VerifyTamperedFile
 Test time =   0.03 sec
 ----------------------------------------------------------
 Test Passed.
-"CryptoTest.VerifyTamperedFile" end time: Jun 28 16:10 AUS Eastern Standard Time
+"CryptoTest.VerifyTamperedFile" end time: Jun 28 16:26 AUS Eastern Standard Time
 "CryptoTest.VerifyTamperedFile" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1119,7 +1119,7 @@ Test Passed.
 37/43 Test: VersionTest.EqualVersions
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=VersionTest.EqualVersions" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"VersionTest.EqualVersions" start time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.EqualVersions" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1138,7 +1138,7 @@ Note: Google Test filter = VersionTest.EqualVersions
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"VersionTest.EqualVersions" end time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.EqualVersions" end time: Jun 28 16:26 AUS Eastern Standard Time
 "VersionTest.EqualVersions" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1146,7 +1146,7 @@ Test Passed.
 38/43 Test: VersionTest.MajorVersionComparison
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=VersionTest.MajorVersionComparison" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"VersionTest.MajorVersionComparison" start time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.MajorVersionComparison" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1165,7 +1165,7 @@ Note: Google Test filter = VersionTest.MajorVersionComparison
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"VersionTest.MajorVersionComparison" end time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.MajorVersionComparison" end time: Jun 28 16:26 AUS Eastern Standard Time
 "VersionTest.MajorVersionComparison" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1173,7 +1173,7 @@ Test Passed.
 39/43 Test: VersionTest.MinorVersionComparison
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=VersionTest.MinorVersionComparison" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"VersionTest.MinorVersionComparison" start time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.MinorVersionComparison" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1192,7 +1192,7 @@ Note: Google Test filter = VersionTest.MinorVersionComparison
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"VersionTest.MinorVersionComparison" end time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.MinorVersionComparison" end time: Jun 28 16:26 AUS Eastern Standard Time
 "VersionTest.MinorVersionComparison" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1200,7 +1200,7 @@ Test Passed.
 40/43 Test: VersionTest.PatchVersionComparison
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=VersionTest.PatchVersionComparison" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"VersionTest.PatchVersionComparison" start time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.PatchVersionComparison" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1219,7 +1219,7 @@ Note: Google Test filter = VersionTest.PatchVersionComparison
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"VersionTest.PatchVersionComparison" end time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.PatchVersionComparison" end time: Jun 28 16:26 AUS Eastern Standard Time
 "VersionTest.PatchVersionComparison" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1227,7 +1227,7 @@ Test Passed.
 41/43 Test: VersionTest.MultiDigitVersions
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=VersionTest.MultiDigitVersions" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"VersionTest.MultiDigitVersions" start time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.MultiDigitVersions" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1246,7 +1246,7 @@ Note: Google Test filter = VersionTest.MultiDigitVersions
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"VersionTest.MultiDigitVersions" end time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.MultiDigitVersions" end time: Jun 28 16:26 AUS Eastern Standard Time
 "VersionTest.MultiDigitVersions" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1254,7 +1254,7 @@ Test Passed.
 42/43 Test: VersionTest.EmptyVersion
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=VersionTest.EmptyVersion" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"VersionTest.EmptyVersion" start time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.EmptyVersion" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1273,7 +1273,7 @@ Note: Google Test filter = VersionTest.EmptyVersion
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"VersionTest.EmptyVersion" end time: Jun 28 16:10 AUS Eastern Standard Time
+"VersionTest.EmptyVersion" end time: Jun 28 16:26 AUS Eastern Standard Time
 "VersionTest.EmptyVersion" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -1281,7 +1281,7 @@ Test Passed.
 43/43 Test: Iso8601Test.ReturnsValidFormat
 Command: "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test.exe" "--gtest_filter=Iso8601Test.ReturnsValidFormat" "--gtest_also_run_disabled_tests"
 Directory: C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build
-"Iso8601Test.ReturnsValidFormat" start time: Jun 28 16:10 AUS Eastern Standard Time
+"Iso8601Test.ReturnsValidFormat" start time: Jun 28 16:26 AUS Eastern Standard Time
 Output:
 ----------------------------------------------------------
 Running main() from C:/M/B/src/googletest-1.17.0/googletest/src/gtest_main.cc
@@ -1300,8 +1300,8 @@ Note: Google Test filter = Iso8601Test.ReturnsValidFormat
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"Iso8601Test.ReturnsValidFormat" end time: Jun 28 16:10 AUS Eastern Standard Time
+"Iso8601Test.ReturnsValidFormat" end time: Jun 28 16:26 AUS Eastern Standard Time
 "Iso8601Test.ReturnsValidFormat" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Jun 28 16:10 AUS Eastern Standard Time
+End testing: Jun 28 16:26 AUS Eastern Standard Time

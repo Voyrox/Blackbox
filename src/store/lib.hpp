@@ -5,6 +5,13 @@
 #include <tuple>
 #include <sqlite3.h>
 
+struct TrustedVendor {
+    std::string name;
+    std::string public_key_pem;
+    std::string fingerprint;
+    std::string added_at;
+};
+
 class Store {
 public:
     Store();
@@ -35,6 +42,11 @@ public:
     int beginTransaction();
     int commitTransaction();
     int rollbackTransaction();
+
+    int addTrustedVendor(const std::string& name, const std::string& public_key_pem);
+    int removeTrustedVendor(const std::string& name);
+    std::vector<TrustedVendor> listTrustedVendors();
+    std::vector<std::pair<std::string, std::string>> getAllVendorKeys();
 
 private:
     sqlite3* db_ = nullptr;

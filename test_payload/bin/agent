@@ -1,1 +1,9 @@
-fake binary content
+#!/bin/sh
+# ICS Firmware Agent v2.3.1
+# ARM Cortex-A7 ELF binary (placeholder)
+echo "ics-firmware-agent v2.3.1 starting..."
+echo "Controller: Siemens S7-1500"
+echo "Protocol: PROFINET"
+echo "Telemetry: enabled (30s interval)"
+echo "Watchdog: active (5s timeout)"
+echo "Agent ready"
