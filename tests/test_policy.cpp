@@ -12,7 +12,7 @@ protected:
     Store store;
 
     void SetUp() override {
-        db_path = fs::temp_directory_path() / "airgapctl_policy_test.db";
+        db_path = fs::temp_directory_path() / "blackbox_policy_test.db";
         fs::remove(db_path);
         store.open(db_path.string());
     }

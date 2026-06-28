@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
+#include <iterator>
 #include <string>
 
 namespace fs = std::filesystem;
@@ -26,7 +27,7 @@ protected:
     AuditLog audit;
 
     void SetUp() override {
-        tmp_dir = fs::temp_directory_path() / "airgapctl_pkg_test";
+        tmp_dir = fs::temp_directory_path() / "blackbox_pkg_test";
         fs::remove_all(tmp_dir);
         fs::create_directories(tmp_dir);
 
@@ -46,6 +47,10 @@ protected:
         db_path = tmp_dir / "test.db";
         store.open(db_path.string());
         audit.open(db_path.string());
+
+        std::ifstream kf(pub_key.string());
+        std::string pem((std::istreambuf_iterator<char>(kf)), {});
+        store.addTrustedVendor("test-vendor", pem);
     }
 
     void TearDown() override {
@@ -60,7 +65,7 @@ protected:
     }
 
     int runImport() {
-        return verifyPackage(pkg_path.string(), pub_key.string(), &store, &audit);
+        return verifyPackage(pkg_path.string(), &store, &audit);
     }
 };
 

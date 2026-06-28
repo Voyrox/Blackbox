@@ -14,7 +14,7 @@ protected:
     fs::path tmp_dir;
 
     void SetUp() override {
-        tmp_dir = fs::temp_directory_path() / "airgapctl_crypto_test";
+        tmp_dir = fs::temp_directory_path() / "blackbox_crypto_test";
         fs::create_directories(tmp_dir);
     }
 

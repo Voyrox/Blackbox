@@ -6,23 +6,44 @@
 #include "policy/lib.hpp"
 
 #include <cstring>
+#include <fstream>
 #include <iostream>
+#include <iterator>
 #include <string>
 
 static void printUsage() {
-    std::cout << clr::bold("Usage:") << "\n";
-    std::cout << "  airgapctl package create --name <name> --version <ver>\n";
-    std::cout << "      --payload <path> --sbom <path> --out <output>\n";
-    std::cout << "  airgapctl package sign <pkg> --key <private_key>\n";
-    std::cout << "  airgapctl keygen --out <dir>\n";
-    std::cout << "  airgapctl import <pkg> [--trusted-key <pub_key>]\n";
-    std::cout << "  airgapctl install <name> --version <ver>\n";
-    std::cout << "  airgapctl approve <name> --version <ver>\n";
-    std::cout << "  airgapctl policy block <name> <version> --reason <text>\n";
-    std::cout << "  airgapctl policy unblock <name> <version>\n";
-    std::cout << "  airgapctl policy list\n";
-    std::cout << "  airgapctl status\n";
-    std::cout << "  airgapctl audit verify-chain\n";
+    std::cout << "\n";
+    std::cout << clr::bold("blackbox") << "  — Secure update manager for air-gapped systems\n";
+    std::cout << "\n";
+    std::cout << clr::bold("Usage:") << "  blackbox " << clr::cyan("<command>") << " " << clr::yellow("[options]") << "\n";
+    std::cout << "\n";
+    std::cout << "  " << clr::bold("Key management") << "\n";
+    std::cout << "    " << clr::cyan("keygen") << " --out " << clr::yellow("<dir>") << R"(                                   Generate ECDSA P-256 key pair)" << "\n";
+    std::cout << "\n";
+    std::cout << "  " << clr::bold("Package operations") << "\n";
+    std::cout << "    " << clr::cyan("package create") << " --name " << clr::yellow("<name>") << " --version " << clr::yellow("<ver>") << "\n";
+    std::cout << "        --payload " << clr::yellow("<path>") << " --sbom " << clr::yellow("<path>") << " --out " << clr::yellow("<output>") << "    Create a signed package bundle\n";
+    std::cout << "    " << clr::cyan("package sign") << " " << clr::yellow("<pkg>") << " --key " << clr::yellow("<private_key>") << "               Sign an existing package\n";
+    std::cout << "\n";
+    std::cout << "  " << clr::bold("Trust management") << "\n";
+    std::cout << "    " << clr::cyan("trust add") << " " << clr::yellow("<pub_key>") << " --name " << clr::yellow("<vendor>") << "                  Add a trusted vendor public key\n";
+    std::cout << "    " << clr::cyan("trust list") << R"(                                           List trusted vendors)" << "\n";
+    std::cout << "    " << clr::cyan("trust remove") << " --name " << clr::yellow("<vendor>") << R"(                         Remove a trusted vendor)" << "\n";
+    std::cout << "\n";
+    std::cout << "  " << clr::bold("Import / Approve / Install") << "\n";
+    std::cout << "    " << clr::cyan("import") << " " << clr::yellow("<pkg>") << R"(                                         Verify and import a package)" << "\n";
+    std::cout << "    " << clr::cyan("approve") << " " << clr::yellow("<name>") << " --version " << clr::yellow("<ver>") << R"(                       Approve a pending bundle for install)" << "\n";
+    std::cout << "    " << clr::cyan("install") << " " << clr::yellow("<name>") << " --version " << clr::yellow("<ver>") << R"(                       Install an approved bundle)" << "\n";
+    std::cout << "\n";
+    std::cout << "  " << clr::bold("Policy (dependency blocking)") << "\n";
+    std::cout << "    " << clr::cyan("policy block") << " " << clr::yellow("<name>") << " " << clr::yellow("<version>") << " --reason " << clr::yellow("<text>") << "        Block a vulnerable dependency\n";
+    std::cout << "    " << clr::cyan("policy unblock") << " " << clr::yellow("<name>") << " " << clr::yellow("<version>") << R"(                      Unblock a dependency)" << "\n";
+    std::cout << "    " << clr::cyan("policy list") << R"(                                          List blocked versions)" << "\n";
+    std::cout << "\n";
+    std::cout << "  " << clr::bold("Status & Audit") << "\n";
+    std::cout << "    " << clr::cyan("status") << R"(                                               Show installed packages and imported bundles)" << "\n";
+    std::cout << "    " << clr::cyan("audit verify-chain") << R"(                                   Verify tamper-evident audit chain)" << "\n";
+    std::cout << "\n";
 }
 
 static const char* getArg(int& i, int argc, char* argv[], const char* flag) {
@@ -118,27 +139,100 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         std::string pkg_path = argv[2];
-        std::string pub_key_path = "keys/release.key.pub";
-        for (int i = 3; i < argc; i++) {
-            if (std::strcmp(argv[i], "--trusted-key") == 0) {
-                auto v = getArg(i, argc, argv, "--trusted-key");
-                if (!v) return 1; pub_key_path = v;
+
+        Store store;
+        store.open("airgap.db");
+        AuditLog audit;
+        audit.open("airgap.db");
+        return verifyPackage(pkg_path, &store, &audit);
+    }
+
+    if (std::strcmp(argv[1], "trust") == 0 && argc >= 3) {
+        Store store;
+        store.open("airgap.db");
+
+        if (std::strcmp(argv[2], "add") == 0) {
+            if (argc < 4) {
+                std::cerr << clr::red("error:") << " usage: blackbox trust add <pub_key> --name <vendor>" << std::endl;
+                return 1;
+            }
+            std::string key_path = argv[3];
+            std::string name;
+            for (int i = 4; i < argc; i++) {
+                if (std::strcmp(argv[i], "--name") == 0) {
+                    auto v = getArg(i, argc, argv, "--name");
+                    if (!v) return 1; name = v;
                 } else {
                     std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
                     return 1;
                 }
             }
+            if (name.empty()) {
+                std::cerr << clr::red("error:") << " --name is required" << std::endl;
+                return 1;
+            }
+            std::ifstream f(key_path);
+            if (!f) {
+                std::cerr << clr::red("error:") << " cannot read " << key_path << std::endl;
+                return 1;
+            }
+            std::string pem((std::istreambuf_iterator<char>(f)), {});
+            if (store.addTrustedVendor(name, pem) != 0) {
+                std::cerr << "error: failed to add trusted vendor" << std::endl;
+                return 1;
+            }
+            std::string fp = sha256Data(pem);
+            std::cout << clr::green("Trusted vendor added:") << " " << clr::bold(name) << std::endl;
+            std::cout << "  Fingerprint: " << fp << std::endl;
+            std::cout << "  (verify this fingerprint with the vendor out-of-band)" << std::endl;
+            return 0;
+        }
 
-            Store store;
-        store.open("airgap.db");
-        AuditLog audit;
-        audit.open("airgap.db");
-        return verifyPackage(pkg_path, pub_key_path, &store, &audit);
+        if (std::strcmp(argv[2], "remove") == 0) {
+            std::string name;
+            for (int i = 3; i < argc; i++) {
+                if (std::strcmp(argv[i], "--name") == 0) {
+                    auto v = getArg(i, argc, argv, "--name");
+                    if (!v) return 1; name = v;
+                } else {
+                    std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
+                    return 1;
+                }
+            }
+            if (name.empty()) {
+                std::cerr << clr::red("error:") << " --name is required" << std::endl;
+                return 1;
+            }
+            if (store.removeTrustedVendor(name) != 0) {
+                std::cerr << "error: failed to remove trusted vendor" << std::endl;
+                return 1;
+            }
+            std::cout << clr::green("Trusted vendor removed:") << " " << clr::bold(name) << std::endl;
+            return 0;
+        }
+
+        if (std::strcmp(argv[2], "list") == 0) {
+            auto vendors = store.listTrustedVendors();
+            std::cout << clr::bold("Trusted vendors:") << std::endl;
+            if (vendors.empty()) {
+                std::cout << "  (none)" << std::endl;
+            } else {
+                for (const auto& v : vendors) {
+                    std::cout << "  " << clr::bold(v.name) << std::endl;
+                    std::cout << "    Fingerprint: " << v.fingerprint << std::endl;
+                    std::cout << "    Added:       " << v.added_at << std::endl;
+                }
+            }
+            return 0;
+        }
+
+        std::cerr << clr::red("error:") << " unknown trust subcommand: " << argv[2] << std::endl;
+        return 1;
     }
 
     if (std::strcmp(argv[1], "install") == 0) {
         if (argc < 4) {
-            std::cerr << clr::red("error:") << " usage: airgapctl install <name> --version <ver>" << std::endl;
+            std::cerr << clr::red("error:") << " usage: blackbox install <name> --version <ver>" << std::endl;
             return 1;
         }
         std::string name = argv[2];
@@ -166,7 +260,7 @@ int main(int argc, char* argv[]) {
         if (!store.bundleImported(name, version)) {
             std::string reason = "bundle not imported";
             std::cerr << clr::red("error:") << " " << name << " " << version
-                      << " has not been imported. Run 'airgapctl import' first." << std::endl;
+                      << " has not been imported. Run 'blackbox import' first." << std::endl;
             store.rollbackTransaction();
             audit.writeEvent("PACKAGE_IMPORTED", name, version, "failed", reason, "");
             return 1;
@@ -176,7 +270,7 @@ int main(int argc, char* argv[]) {
         if (status != "approved") {
             std::string reason = "not approved";
             std::cerr << clr::red("error:") << " " << name << " " << version
-                      << " has status '" << status << "'. Run 'airgapctl approve' first." << std::endl;
+                      << " has status '" << status << "'. Run 'blackbox approve' first." << std::endl;
             store.rollbackTransaction();
             audit.writeEvent("PACKAGE_INSTALL_REJECTED", name, version, "failed", reason, "");
             return 1;
@@ -207,7 +301,7 @@ int main(int argc, char* argv[]) {
 
     if (std::strcmp(argv[1], "approve") == 0) {
         if (argc < 4) {
-            std::cerr << clr::red("error:") << " usage: airgapctl approve <name> --version <ver>" << std::endl;
+            std::cerr << clr::red("error:") << " usage: blackbox approve <name> --version <ver>" << std::endl;
             return 1;
         }
         std::string name = argv[2];
@@ -239,7 +333,7 @@ int main(int argc, char* argv[]) {
 
         if (std::strcmp(argv[2], "block") == 0) {
             if (argc < 5) {
-                std::cerr << clr::red("error:") << " usage: airgapctl policy block <name> <version> --reason <text>" << std::endl;
+                std::cerr << clr::red("error:") << " usage: blackbox policy block <name> <version> --reason <text>" << std::endl;
                 return 1;
             }
             std::string pkg = argv[3];
@@ -265,7 +359,7 @@ int main(int argc, char* argv[]) {
 
         if (std::strcmp(argv[2], "unblock") == 0) {
             if (argc < 5) {
-                std::cerr << clr::red("error:") << " usage: airgapctl policy unblock <name> <version>" << std::endl;
+                std::cerr << clr::red("error:") << " usage: blackbox policy unblock <name> <version>" << std::endl;
                 return 1;
             }
             std::string pkg = argv[3];

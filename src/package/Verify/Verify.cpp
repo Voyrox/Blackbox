@@ -81,11 +81,24 @@ static bool isMetadataExpired(const std::string& expires_at) {
     return now > expiry_time;
 }
 
-int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
+int verifyPackage(const std::string& pkg_path,
                    Store* store, AuditLog* audit) {
     std::string sig_path = pkg_path + ".sig";
 
-    bool sig_valid = verifyFile(pkg_path, sig_path, pub_key_path);
+    std::string vendor_name;
+    bool sig_valid = false;
+    if (store) {
+        auto keys = store->getAllVendorKeys();
+        for (const auto& [name, pem] : keys) {
+            if (verifyFileWithKey(pkg_path, sig_path, pem)) {
+                sig_valid = true;
+                vendor_name = name;
+                break;
+            }
+        }
+    } else {
+        sig_valid = verifyFile(pkg_path, sig_path, "keys/release.key.pub");
+    }
 
     struct archive* a = archive_read_new();
     archive_read_support_filter_gzip(a);
@@ -146,7 +159,10 @@ int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
     }
 
     std::cout << std::endl;
-    std::cout << "  Signature    " << (sig_valid ? clr::ok("valid") : clr::fail("INVALID")) << std::endl;
+    std::cout << "  Signature    " << (sig_valid ? clr::ok("valid") : clr::fail("INVALID"));
+    if (sig_valid && !vendor_name.empty())
+        std::cout << " (" << vendor_name << ")";
+    std::cout << std::endl;
     std::cout << "  Bundle       " << (manifest_str.empty() ? clr::fail("missing") : clr::bold(pkg_name + " " + version)) << std::endl;
     if (!manifest_str.empty()) {
         std::cout << "  Payload hash " << (hash_matches ? clr::ok("valid") : clr::fail("INVALID")) << std::endl;

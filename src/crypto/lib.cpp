@@ -2,6 +2,7 @@
 #include "color.hpp"
 #include <openssl/evp.h>
 #include <openssl/pem.h>
+#include <openssl/bio.h>
 #include <openssl/err.h>
 
 #include <fstream>
@@ -181,6 +182,41 @@ bool verifyFile(const std::string& file_path, const std::string& sig_path, const
     while (file.read(buf, sizeof(buf)) || file.gcount()) {
         EVP_DigestVerifyUpdate(ctx, buf, file.gcount());
     }
+
+    int ret = EVP_DigestVerifyFinal(ctx, sig.data(), sig_len);
+    EVP_MD_CTX_free(ctx);
+    EVP_PKEY_free(pkey);
+
+    return ret == 1;
+}
+
+bool verifyFileWithKey(const std::string& file_path, const std::string& sig_path, const std::string& pub_key_pem) {
+    std::ifstream file(file_path, std::ios::binary);
+    if (!file) return false;
+
+    BIO* bio = BIO_new_mem_buf(pub_key_pem.data(), pub_key_pem.size());
+    if (!bio) return false;
+    EVP_PKEY* pkey = PEM_read_bio_PUBKEY(bio, nullptr, nullptr, nullptr);
+    BIO_free(bio);
+    if (!pkey) return false;
+
+    FILE* sf = fopen(sig_path.c_str(), "rb");
+    if (!sf) { EVP_PKEY_free(pkey); return false; }
+    fseek(sf, 0, SEEK_END);
+    long sig_len = ftell(sf);
+    fseek(sf, 0, SEEK_SET);
+    std::vector<unsigned char> sig(sig_len);
+    fread(sig.data(), 1, sig_len, sf);
+    fclose(sf);
+
+    EVP_MD_CTX* ctx = EVP_MD_CTX_new();
+    EVP_DigestVerifyInit(ctx, nullptr, EVP_sha256(), nullptr, pkey);
+
+    file.clear();
+    file.seekg(0);
+    char buf[8192];
+    while (file.read(buf, sizeof(buf)) || file.gcount())
+        EVP_DigestVerifyUpdate(ctx, buf, file.gcount());
 
     int ret = EVP_DigestVerifyFinal(ctx, sig.data(), sig_len);
     EVP_MD_CTX_free(ctx);

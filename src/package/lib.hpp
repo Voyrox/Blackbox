@@ -17,7 +17,7 @@ struct Manifest {
     std::string minimum_allowed_version = "0.0.0";
     bool requires_reboot = false;
     std::vector<std::pair<std::string, std::string>> dependencies;
-    std::string created_by = "airgapctl";
+    std::string created_by = "blackbox";
     std::string expires_at;
 };
 
@@ -30,7 +30,7 @@ int createPackage(const std::string& name, const std::string& version,
 
 int signPackage(const std::string& pkg_path, const std::string& key_path);
 
-int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
+int verifyPackage(const std::string& pkg_path,
                    Store* store = nullptr, AuditLog* audit = nullptr);
 
 int approvePackage(const std::string& pkg_name, const std::string& version,

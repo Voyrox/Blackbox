@@ -12,7 +12,7 @@ protected:
     AuditLog audit;
 
     void SetUp() override {
-        db_path = fs::temp_directory_path() / "airgapctl_audit_test.db";
+        db_path = fs::temp_directory_path() / "blackbox_audit_test.db";
         fs::remove(db_path);
         audit.open(db_path.string());
     }

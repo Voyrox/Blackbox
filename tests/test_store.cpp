@@ -12,7 +12,7 @@ protected:
     Store store;
 
     void SetUp() override {
-        db_path = fs::temp_directory_path() / "airgapctl_store_test.db";
+        db_path = fs::temp_directory_path() / "blackbox_store_test.db";
         fs::remove(db_path);
         store.open(db_path.string());
     }
@@ -116,4 +116,48 @@ TEST_F(StoreTest, CommitTransactionPersists) {
     store.commitTransaction();
 
     EXPECT_TRUE(store.bundleImported("pkg", "1.0.0"));
+}
+
+TEST_F(StoreTest, AddAndListTrustedVendor) {
+    std::string pem = "-----BEGIN PUBLIC KEY-----\nZmFrZQ==\n-----END PUBLIC KEY-----";
+    ASSERT_EQ(store.addTrustedVendor("Acme Corp", pem), 0);
+
+    auto vendors = store.listTrustedVendors();
+    ASSERT_EQ(vendors.size(), 1);
+    EXPECT_EQ(vendors[0].name, "Acme Corp");
+    EXPECT_EQ(vendors[0].public_key_pem, pem);
+}
+
+TEST_F(StoreTest, ListTrustedVendorsEmpty) {
+    auto vendors = store.listTrustedVendors();
+    EXPECT_TRUE(vendors.empty());
+}
+
+TEST_F(StoreTest, RemoveTrustedVendor) {
+    std::string pem = "-----BEGIN PUBLIC KEY-----\nZmFrZQ==\n-----END PUBLIC KEY-----";
+    store.addTrustedVendor("Acme Corp", pem);
+    ASSERT_EQ(store.removeTrustedVendor("Acme Corp"), 0);
+    EXPECT_TRUE(store.listTrustedVendors().empty());
+}
+
+TEST_F(StoreTest, GetAllVendorKeysReturnsNameAndPem) {
+    std::string pem = "-----BEGIN PUBLIC KEY-----\nZmFrZQ==\n-----END PUBLIC KEY-----";
+    store.addTrustedVendor("Vendor A", pem);
+    store.addTrustedVendor("Vendor B", pem);
+
+    auto keys = store.getAllVendorKeys();
+    ASSERT_EQ(keys.size(), 2);
+    EXPECT_EQ(keys[0].first, "Vendor A");
+    EXPECT_EQ(keys[0].second, pem);
+    EXPECT_EQ(keys[1].first, "Vendor B");
+}
+
+TEST_F(StoreTest, AddTrustedVendorComputesFingerprint) {
+    std::string pem = "test-public-key-data";
+    store.addTrustedVendor("Test Vendor", pem);
+
+    auto vendors = store.listTrustedVendors();
+    ASSERT_EQ(vendors.size(), 1);
+    EXPECT_FALSE(vendors[0].fingerprint.empty());
+    EXPECT_EQ(vendors[0].fingerprint.size(), 64);
 }

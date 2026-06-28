@@ -1,5 +1,0 @@
-if(EXISTS "C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test[1]_tests.cmake")
-  include("C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test[1]_tests.cmake")
-else()
-  add_test(airgapctl_test_NOT_BUILT airgapctl_test_NOT_BUILT)
-endif()

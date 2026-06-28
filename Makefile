@@ -1,9 +1,11 @@
 BUILD_DIR = build
-BINARY = $(BUILD_DIR)/airgapctl
+BINARY = $(BUILD_DIR)/blackbox
+PREFIX ?= /usr/local
 
-.PHONY: all test run clean
+.PHONY: all test run install clean
 
 all:
+	-cmake -E remove_directory $(BUILD_DIR)
 	cmake -B $(BUILD_DIR) -G Ninja
 	cmake --build $(BUILD_DIR)
 
@@ -17,10 +19,16 @@ run: all
 		--sbom test_sbom.json \
 		--out dist/ics-firmware-v2-2.3.1.agpkg
 	$(BINARY) package sign dist/ics-firmware-v2-2.3.1.agpkg --key keys/release.key
-	$(BINARY) import dist/ics-firmware-v2-2.3.1.agpkg --trusted-key keys/release.key.pub
+	$(BINARY) trust add keys/release.key.pub --name "Internal Dev"
+	$(BINARY) import dist/ics-firmware-v2-2.3.1.agpkg
 	$(BINARY) approve ics-firmware-v2 --version 2.3.1
 	$(BINARY) install ics-firmware-v2 --version 2.3.1
 	$(BINARY) status
+
+install: all
+	cmake -E make_directory $(DESTDIR)$(PREFIX)/bin
+	-cmake -E copy $(BINARY) $(DESTDIR)$(PREFIX)/bin/
+	-cmake -E copy $(BINARY).exe $(DESTDIR)$(PREFIX)/bin/
 
 test: all
 	cd $(BUILD_DIR) && ctest --output-on-failure

@@ -1,4 +1,5 @@
 #include "lib.hpp"
+#include "crypto/lib.hpp"
 #include <iostream>
 #include <sstream>
 
@@ -317,6 +318,78 @@ std::vector<std::tuple<std::string, std::string, std::string, std::string>> Stor
         auto at = (const char*)sqlite3_column_text(stmt, 3);
         result.emplace_back(pkg ? pkg : "", ver ? ver : "",
                             prev ? prev : "", at ? at : "");
+    }
+    sqlite3_finalize(stmt);
+    return result;
+}
+
+int Store::addTrustedVendor(const std::string& name, const std::string& public_key_pem) {
+    if (!db_) return 1;
+    std::string fp = sha256Data(public_key_pem);
+    std::string sql = "INSERT OR REPLACE INTO trusted_vendors "
+                      "(name, public_key_pem, fingerprint, added_at) "
+                      "VALUES (?, ?, ?, datetime('now'))";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, public_key_pem.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, fp.c_str(), -1, SQLITE_TRANSIENT);
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (rc != SQLITE_DONE) {
+        std::cerr << "sqlite error: " << sqlite3_errmsg(db_) << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
+int Store::removeTrustedVendor(const std::string& name) {
+    if (!db_) return 1;
+    std::string sql = "DELETE FROM trusted_vendors WHERE name=?";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (rc != SQLITE_DONE) {
+        std::cerr << "sqlite error: " << sqlite3_errmsg(db_) << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
+std::vector<TrustedVendor> Store::listTrustedVendors() {
+    std::vector<TrustedVendor> result;
+    if (!db_) return result;
+    std::string sql = "SELECT name, public_key_pem, fingerprint, added_at FROM trusted_vendors ORDER BY name";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        TrustedVendor v;
+        auto n = (const char*)sqlite3_column_text(stmt, 0);
+        auto k = (const char*)sqlite3_column_text(stmt, 1);
+        auto f = (const char*)sqlite3_column_text(stmt, 2);
+        auto a = (const char*)sqlite3_column_text(stmt, 3);
+        v.name = n ? n : "";
+        v.public_key_pem = k ? k : "";
+        v.fingerprint = f ? f : "";
+        v.added_at = a ? a : "";
+        result.push_back(v);
+    }
+    sqlite3_finalize(stmt);
+    return result;
+}
+
+std::vector<std::pair<std::string, std::string>> Store::getAllVendorKeys() {
+    std::vector<std::pair<std::string, std::string>> result;
+    if (!db_) return result;
+    std::string sql = "SELECT name, public_key_pem FROM trusted_vendors";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        auto n = (const char*)sqlite3_column_text(stmt, 0);
+        auto k = (const char*)sqlite3_column_text(stmt, 1);
+        result.emplace_back(n ? n : "", k ? k : "");
     }
     sqlite3_finalize(stmt);
     return result;

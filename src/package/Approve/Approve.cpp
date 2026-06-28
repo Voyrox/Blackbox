@@ -14,7 +14,7 @@ int approvePackage(const std::string& pkg_name, const std::string& version,
 
     if (!store->bundleImported(pkg_name, version)) {
         std::cerr << clr::red("error:") << " " << pkg_name << " " << version
-                  << " has not been imported. Run 'airgapctl import' first." << std::endl;
+                  << " has not been imported. Run 'blackbox import' first." << std::endl;
         return 1;
     }
 
