@@ -3,6 +3,7 @@
 #include "crypto/lib.hpp"
 #include "store/lib.hpp"
 #include "audit/lib.hpp"
+#include "policy/lib.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -16,6 +17,10 @@ static void printUsage() {
     std::cout << "  airgapctl keygen --out <dir>\n";
     std::cout << "  airgapctl import <pkg> [--trusted-key <pub_key>]\n";
     std::cout << "  airgapctl install <name> --version <ver>\n";
+    std::cout << "  airgapctl approve <name> --version <ver>\n";
+    std::cout << "  airgapctl policy block <name> <version> --reason <text>\n";
+    std::cout << "  airgapctl policy unblock <name> <version>\n";
+    std::cout << "  airgapctl policy list\n";
     std::cout << "  airgapctl status\n";
     std::cout << "  airgapctl audit verify-chain\n";
 }
@@ -156,12 +161,24 @@ int main(int argc, char* argv[]) {
         AuditLog audit;
         store.open("airgap.db");
         audit.open("airgap.db");
+        store.beginTransaction();
 
         if (!store.bundleImported(name, version)) {
             std::string reason = "bundle not imported";
             std::cerr << clr::red("error:") << " " << name << " " << version
                       << " has not been imported. Run 'airgapctl import' first." << std::endl;
+            store.rollbackTransaction();
             audit.writeEvent("PACKAGE_IMPORTED", name, version, "failed", reason, "");
+            return 1;
+        }
+
+        std::string status = store.getBundleStatus(name, version);
+        if (status != "approved") {
+            std::string reason = "not approved";
+            std::cerr << clr::red("error:") << " " << name << " " << version
+                      << " has status '" << status << "'. Run 'airgapctl approve' first." << std::endl;
+            store.rollbackTransaction();
+            audit.writeEvent("PACKAGE_INSTALL_REJECTED", name, version, "failed", reason, "");
             return 1;
         }
 
@@ -171,12 +188,14 @@ int main(int argc, char* argv[]) {
             std::cout << clr::fail("Install rejected: downgrade detected") << std::endl;
             std::cout << "  " << name << " " << version
                       << " is older than installed version " << installed << std::endl;
+            store.rollbackTransaction();
             audit.writeEvent("ROLLBACK_BLOCKED", name, version, "failed", reason, "");
             return 1;
         }
 
         std::string manifest_hash = store.getImportedManifestHash(name, version);
         store.installPackage(name, version, manifest_hash, installed);
+        store.commitTransaction();
 
         std::cout << clr::green("Installed:") << " " << clr::bold(name + " " + version) << std::endl;
         if (!installed.empty()) {
@@ -184,6 +203,96 @@ int main(int argc, char* argv[]) {
         }
         audit.writeEvent("PACKAGE_INSTALLED", name, version, "success", "", manifest_hash);
         return 0;
+    }
+
+    if (std::strcmp(argv[1], "approve") == 0) {
+        if (argc < 4) {
+            std::cerr << clr::red("error:") << " usage: airgapctl approve <name> --version <ver>" << std::endl;
+            return 1;
+        }
+        std::string name = argv[2];
+        std::string version;
+        for (int i = 3; i < argc; i++) {
+            if (std::strcmp(argv[i], "--version") == 0) {
+                auto v = getArg(i, argc, argv, "--version");
+                if (!v) return 1; version = v;
+            } else {
+                std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
+                return 1;
+            }
+        }
+        if (version.empty()) {
+            std::cerr << clr::red("error:") << " --version is required" << std::endl;
+            return 1;
+        }
+
+        Store store;
+        AuditLog audit;
+        store.open("airgap.db");
+        audit.open("airgap.db");
+        return approvePackage(name, version, &store, &audit);
+    }
+
+    if (std::strcmp(argv[1], "policy") == 0 && argc >= 3) {
+        Store store;
+        store.open("airgap.db");
+
+        if (std::strcmp(argv[2], "block") == 0) {
+            if (argc < 5) {
+                std::cerr << clr::red("error:") << " usage: airgapctl policy block <name> <version> --reason <text>" << std::endl;
+                return 1;
+            }
+            std::string pkg = argv[3];
+            std::string ver = argv[4];
+            std::string reason = "blocked by policy";
+            for (int i = 5; i < argc; i++) {
+                if (std::strcmp(argv[i], "--reason") == 0) {
+                    auto v = getArg(i, argc, argv, "--reason");
+                    if (!v) return 1; reason = v;
+                } else {
+                    std::cerr << clr::red("error:") << " unknown flag: " << argv[i] << std::endl;
+                    return 1;
+                }
+            }
+            if (store.addBlockedVersion(pkg, ver, reason) != 0) {
+                std::cerr << "error: failed to block " << pkg << " " << ver << std::endl;
+                return 1;
+            }
+            std::cout << clr::green("Blocked:") << " " << clr::bold(pkg + " " + ver) << std::endl;
+            std::cout << "  Reason: " << reason << std::endl;
+            return 0;
+        }
+
+        if (std::strcmp(argv[2], "unblock") == 0) {
+            if (argc < 5) {
+                std::cerr << clr::red("error:") << " usage: airgapctl policy unblock <name> <version>" << std::endl;
+                return 1;
+            }
+            std::string pkg = argv[3];
+            std::string ver = argv[4];
+            if (store.removeBlockedVersion(pkg, ver) != 0) {
+                std::cerr << "error: failed to unblock " << pkg << " " << ver << std::endl;
+                return 1;
+            }
+            std::cout << clr::green("Unblocked:") << " " << clr::bold(pkg + " " + ver) << std::endl;
+            return 0;
+        }
+
+        if (std::strcmp(argv[2], "list") == 0) {
+            auto blocked = store.listBlockedVersions();
+            std::cout << clr::bold("Blocked versions:") << std::endl;
+            if (blocked.empty()) {
+                std::cout << "  (none)" << std::endl;
+            } else {
+                for (const auto& [pkg, ver, reason] : blocked) {
+                    std::cout << "  " << pkg << " " << ver << "  (" << reason << ")" << std::endl;
+                }
+            }
+            return 0;
+        }
+
+        std::cerr << clr::red("error:") << " unknown policy subcommand: " << argv[2] << std::endl;
+        return 1;
     }
 
     if (std::strcmp(argv[1], "status") == 0) {

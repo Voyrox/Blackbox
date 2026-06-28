@@ -18,6 +18,7 @@ run: all
 		--out dist/ics-firmware-v2-2.3.1.agpkg
 	$(BINARY) package sign dist/ics-firmware-v2-2.3.1.agpkg --key keys/release.key
 	$(BINARY) import dist/ics-firmware-v2-2.3.1.agpkg --trusted-key keys/release.key.pub
+	$(BINARY) approve ics-firmware-v2 --version 2.3.1
 	$(BINARY) install ics-firmware-v2 --version 2.3.1
 	$(BINARY) status
 

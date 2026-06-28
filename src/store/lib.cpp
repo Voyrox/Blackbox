@@ -175,6 +175,120 @@ std::vector<std::tuple<std::string, std::string, std::string, std::string>> Stor
     return result;
 }
 
+int Store::addBlockedVersion(const std::string& pkg, const std::string& version,
+                                const std::string& reason) {
+    if (!db_) return 1;
+    std::string sql = "INSERT OR IGNORE INTO blocked_versions "
+                      "(package_name, version, reason, created_at) "
+                      "VALUES (?, ?, ?, datetime('now'))";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, version.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, reason.c_str(), -1, SQLITE_TRANSIENT);
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (rc != SQLITE_DONE) {
+        std::cerr << "sqlite error: " << sqlite3_errmsg(db_) << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
+int Store::removeBlockedVersion(const std::string& pkg, const std::string& version) {
+    if (!db_) return 1;
+    std::string sql = "DELETE FROM blocked_versions WHERE package_name=? AND version=?";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, version.c_str(), -1, SQLITE_TRANSIENT);
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (rc != SQLITE_DONE) {
+        std::cerr << "sqlite error: " << sqlite3_errmsg(db_) << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
+std::vector<std::tuple<std::string, std::string, std::string>> Store::listBlockedVersions() {
+    std::vector<std::tuple<std::string, std::string, std::string>> result;
+    if (!db_) return result;
+    std::string sql = "SELECT package_name, version, reason FROM blocked_versions ORDER BY package_name, version";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        auto pkg = (const char*)sqlite3_column_text(stmt, 0);
+        auto ver = (const char*)sqlite3_column_text(stmt, 1);
+        auto rsn = (const char*)sqlite3_column_text(stmt, 2);
+        result.emplace_back(pkg ? pkg : "", ver ? ver : "", rsn ? rsn : "");
+    }
+    sqlite3_finalize(stmt);
+    return result;
+}
+
+std::string Store::getBlockedReason(const std::string& pkg, const std::string& version) {
+    if (!db_) return {};
+    std::string sql = "SELECT reason FROM blocked_versions WHERE package_name=? AND version=?";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, version.c_str(), -1, SQLITE_TRANSIENT);
+    std::string reason;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        const char* r = (const char*)sqlite3_column_text(stmt, 0);
+        if (r) reason = r;
+    }
+    sqlite3_finalize(stmt);
+    return reason;
+}
+
+int Store::setBundleStatus(const std::string& pkg, const std::string& version,
+                              const std::string& status) {
+    if (!db_) return 1;
+    std::string sql = "UPDATE imported_bundles SET status=? WHERE package_name=? AND version=?";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, status.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, pkg.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, version.c_str(), -1, SQLITE_TRANSIENT);
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (rc != SQLITE_DONE) {
+        std::cerr << "sqlite error: " << sqlite3_errmsg(db_) << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
+std::string Store::getBundleStatus(const std::string& pkg, const std::string& version) {
+    if (!db_) return {};
+    std::string sql = "SELECT status FROM imported_bundles WHERE package_name=? AND version=?";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, pkg.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, version.c_str(), -1, SQLITE_TRANSIENT);
+    std::string status;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        const char* s = (const char*)sqlite3_column_text(stmt, 0);
+        if (s) status = s;
+    }
+    sqlite3_finalize(stmt);
+    return status;
+}
+
+int Store::beginTransaction() {
+    return exec("BEGIN");
+}
+
+int Store::commitTransaction() {
+    return exec("COMMIT");
+}
+
+int Store::rollbackTransaction() {
+    return exec("ROLLBACK");
+}
+
 std::vector<std::tuple<std::string, std::string, std::string, std::string>> Store::getAllInstalled() {
     std::vector<std::tuple<std::string, std::string, std::string, std::string>> result;
     if (!db_) return result;

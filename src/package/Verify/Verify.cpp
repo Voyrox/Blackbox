@@ -3,6 +3,7 @@
 #include "crypto/lib.hpp"
 #include "store/lib.hpp"
 #include "audit/lib.hpp"
+#include "policy/lib.hpp"
 
 #include <archive.h>
 #include <archive_entry.h>
@@ -44,6 +45,31 @@ static std::string extractJsonString(const std::string& json, const std::string&
     return json.substr(start, end - start);
 }
 
+static std::vector<std::pair<std::string, std::string>> extractDependencies(const std::string& json) {
+    std::vector<std::pair<std::string, std::string>> deps;
+    auto arr_start = json.find("\"dependencies\"");
+    if (arr_start == std::string::npos) return deps;
+    arr_start = json.find('[', arr_start);
+    if (arr_start == std::string::npos) return deps;
+    auto arr_end = json.find(']', arr_start);
+    if (arr_end == std::string::npos) return deps;
+    std::string arr = json.substr(arr_start + 1, arr_end - arr_start - 1);
+    size_t pos = 0;
+    while (true) {
+        auto obj_start = arr.find('{', pos);
+        if (obj_start == std::string::npos) break;
+        auto obj_end = arr.find('}', obj_start);
+        if (obj_end == std::string::npos) break;
+        std::string obj = arr.substr(obj_start, obj_end - obj_start + 1);
+        std::string name = extractJsonString(obj, "name");
+        std::string version = extractJsonString(obj, "version");
+        if (!name.empty())
+            deps.emplace_back(name, version);
+        pos = obj_end + 1;
+    }
+    return deps;
+}
+
 static bool isMetadataExpired(const std::string& expires_at) {
     if (expires_at.empty()) return false;
     auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -78,7 +104,9 @@ int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
     std::string pkg_name, version, manifest_hash, expires_at;
     bool hash_matches = false, sbom_present = false, sbom_hash_matches = false;
     bool expired = false, downgrade = false;
+    bool deps_blocked_flag = false;
     std::string installed_version;
+    std::vector<DepCheck> deps_checked;
 
     if (!manifest_str.empty()) {
         pkg_name = extractJsonString(manifest_str, "package_name");
@@ -104,6 +132,12 @@ int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
 
         expired = isMetadataExpired(expires_at);
 
+        auto raw_deps = extractDependencies(manifest_str);
+        deps_checked = checkDependencies(raw_deps, store);
+        for (const auto& dc : deps_checked) {
+            if (dc.blocked) { deps_blocked_flag = true; break; }
+        }
+
         if (store) {
             installed_version = store->getInstalledVersion(pkg_name);
             if (!installed_version.empty() && versionLessThan(version, installed_version))
@@ -123,9 +157,11 @@ int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
     }
     if (store)
         std::cout << "  Rollback     " << (downgrade ? clr::fail("BLOCKED") : clr::ok("passed")) << std::endl;
+    if (!manifest_str.empty() && store)
+        std::cout << "  Dependencies " << (deps_blocked_flag ? clr::fail("BLOCKED") : clr::ok("all clear")) << std::endl;
 
     bool manifest_ok = !manifest_str.empty() && hash_matches && sbom_present && sbom_hash_matches && !expired;
-    bool all_pass = sig_valid && manifest_ok && !downgrade;
+    bool all_pass = sig_valid && manifest_ok && !downgrade && !deps_blocked_flag;
 
     if (all_pass) {
         std::cout << std::endl;
@@ -133,7 +169,7 @@ int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
 
         if (store) {
             store->addImportedBundle(iso8601Now(), pkg_name, version,
-                                       manifest_hash, "imported");
+                                       manifest_hash, "pending");
         }
         if (audit)
             audit->writeEvent("PACKAGE_IMPORTED", pkg_name, version,
@@ -155,6 +191,15 @@ int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
     if (downgrade) {
         std::cout << "    - " << clr::red("version " + version + " is older than installed " + installed_version + " (downgrade blocked)") << std::endl;
         reason = "downgrade blocked";
+    }
+    if (deps_blocked_flag) {
+        for (const auto& dc : deps_checked) {
+            if (dc.blocked) {
+                std::cout << "    - " << clr::red("dependency " + dc.name + " " + dc.version + " is blocked: " + dc.reason) << std::endl;
+            }
+        }
+        if (reason.empty()) reason = "blocked dependency";
+        else reason += "; blocked dependency";
     }
 
     if (audit) {

@@ -32,3 +32,6 @@ int signPackage(const std::string& pkg_path, const std::string& key_path);
 
 int verifyPackage(const std::string& pkg_path, const std::string& pub_key_path,
                    Store* store = nullptr, AuditLog* audit = nullptr);
+
+int approvePackage(const std::string& pkg_name, const std::string& version,
+                    Store* store = nullptr, AuditLog* audit = nullptr);

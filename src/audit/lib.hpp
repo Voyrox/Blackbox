@@ -23,4 +23,7 @@ private:
                                     const std::string& ver, const std::string& result,
                                     const std::string& reason, const std::string& meta_hash,
                                     const std::string& prev_hash);
+    int initVerifyState();
+    int loadVerifyState(std::string& last_hash, int& count);
+    int saveVerifyState(const std::string& last_hash, int count);
 };

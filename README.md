@@ -8,20 +8,45 @@ This is a **package management tool for air-gapped networks**, not a generic fil
 
 ### Workflow
 
-```
-[connected machine]             [air-gapped machine]
-          |                             |
-  build .agpkg bundle                   |
-  sign it with private key              |
-          |                             |
-  copy .agpkg + .sig                    |
-  to USB / optical disc                 |
-          |--- physical transfer --->   |
-                               import (verify signature,
-                               verify hashes, check expiry)
-                                        |
-                               install (record in store,
-                                block downgrades)
+```mermaid
+flowchart LR
+    subgraph BuildEnv["Build Environment (connected)"]
+        direction TB
+        Keygen["Key Generation<br/><small>ECDSA P-256</small>"]
+        Builder["Package Builder"]
+        Signer["Package Signer"]
+        Keygen --> Builder
+        Builder --> Signer
+    end
+
+    Transfer["Physical Transfer<br/><small>USB / optical disc</small>"]
+
+    subgraph TargetEnv["Target Environment (air-gapped)"]
+        direction TB
+        CLI["CLI"]
+
+        subgraph Verify["Verifier"]
+            SigCheck["Signature Check"]
+            HashCheck["Payload + SBOM Hash Check"]
+            ExpiryCheck["Metadata Expiry Check"]
+            RollbackCheck["Rollback Guard<br/><small>version comparison</small>"]
+        end
+
+        DBs["Local Store<br/><small>SQLite</small>"]
+        Audit["Audit Log<br/><small>Tamper-evident chain</small>"]
+        Installer["Installer"]
+
+        CLI --> SigCheck
+        SigCheck --> HashCheck
+        HashCheck --> ExpiryCheck
+        ExpiryCheck --> RollbackCheck
+        RollbackCheck --> DBs
+        RollbackCheck --> Audit
+        RollbackCheck --> Installer
+    end
+
+    Signer -- ".agpkg + .sig" --> Transfer
+    Transfer --> CLI
 ```
 
 The `.agpkg` format is the only format it understands. To ship an ISO (or any file), place it inside the payload directory when creating the package — the tool verifies its hash as part of the bundle integrity check.

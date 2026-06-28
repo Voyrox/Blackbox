@@ -46,6 +46,13 @@ int AuditLog::open(const std::string& db_path) {
          "  event_hash TEXT NOT NULL"
          ")");
 
+    exec("CREATE TABLE IF NOT EXISTS audit_verify_state ("
+         "  id INTEGER PRIMARY KEY CHECK (id = 1),"
+         "  last_event_hash TEXT NOT NULL,"
+         "  event_count INTEGER NOT NULL,"
+         "  verified_at TEXT NOT NULL"
+         ")");
+
     return 0;
 }
 
@@ -125,10 +132,87 @@ int AuditLog::writeEvent(const std::string& action, const std::string& package_n
     return 0;
 }
 
+int AuditLog::initVerifyState() {
+    std::string sql = "INSERT OR IGNORE INTO audit_verify_state "
+                      "(id, last_event_hash, event_count, verified_at) "
+                      "VALUES (1, '', 0, '1970-01-01T00:00:00Z')";
+    return exec(sql);
+}
+
+int AuditLog::loadVerifyState(std::string& last_hash, int& count) {
+    if (!db_) return 1;
+    initVerifyState();
+    std::string sql = "SELECT last_event_hash, event_count FROM audit_verify_state WHERE id=1";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    int rc = 1;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        auto h = (const char*)sqlite3_column_text(stmt, 0);
+        if (h) last_hash = h;
+        count = sqlite3_column_int(stmt, 1);
+        rc = 0;
+    }
+    sqlite3_finalize(stmt);
+    return rc;
+}
+
+int AuditLog::saveVerifyState(const std::string& last_hash, int count) {
+    if (!db_) return 1;
+    std::string sql = "UPDATE audit_verify_state SET last_event_hash=?, event_count=?, "
+                      "verified_at=datetime('now') WHERE id=1";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, last_hash.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 2, count);
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (rc != SQLITE_DONE) return 1;
+    return 0;
+}
+
 int AuditLog::verifyChain() {
     if (!db_) {
         std::cerr << "audit db not open" << std::endl;
         return 1;
+    }
+
+    std::string prev_last_hash;
+    int prev_count = 0;
+    bool had_state = (loadVerifyState(prev_last_hash, prev_count) == 0);
+    bool tampered_since_verify = false;
+
+    if (had_state && prev_count > 0) {
+        std::string cur_last_hash = getLastHash();
+        int cur_count = 0;
+        std::string count_sql = "SELECT COUNT(*) FROM audit_log";
+        sqlite3_stmt* cstmt;
+        sqlite3_prepare_v2(db_, count_sql.c_str(), -1, &cstmt, nullptr);
+        if (sqlite3_step(cstmt) == SQLITE_ROW)
+            cur_count = sqlite3_column_int(cstmt, 0);
+        sqlite3_finalize(cstmt);
+
+        if (cur_count > prev_count) {
+            tampered_since_verify = true;
+            std::cout << clr::yellow("Warning:") << " " << (cur_count - prev_count)
+                      << " event(s) appended since last verification" << std::endl;
+        } else if (cur_count < prev_count) {
+            tampered_since_verify = true;
+            std::cout << clr::fail("Tamper detected:") << " events removed since last verification" << std::endl;
+        }
+
+        std::string saved_ts;
+        std::string chk_sql = "SELECT verified_at FROM audit_verify_state WHERE id=1";
+        sqlite3_stmt* ts_stmt;
+        sqlite3_prepare_v2(db_, chk_sql.c_str(), -1, &ts_stmt, nullptr);
+        if (sqlite3_step(ts_stmt) == SQLITE_ROW) {
+            auto t = (const char*)sqlite3_column_text(ts_stmt, 0);
+            if (t) saved_ts = t;
+        }
+        sqlite3_finalize(ts_stmt);
+
+        if (tampered_since_verify) {
+            std::cout << "  Last verified: " << (saved_ts.empty() ? "never" : saved_ts) << std::endl;
+        }
     }
 
     std::string sql = "SELECT timestamp, actor, action, package_name, version, result, reason, "
@@ -164,7 +248,6 @@ int AuditLog::verifyChain() {
         std::string s_stored_prev = stored_prev ? stored_prev : "";
         std::string s_stored_hash = stored_hash ? stored_hash : "";
 
-        // Check previous hash matches
         if (s_stored_prev != expected_prev) {
             chain_valid = false;
             std::cout << "Chain break at " << s_ts << ": "
@@ -172,7 +255,6 @@ int AuditLog::verifyChain() {
                       << " but got " << s_stored_prev << std::endl;
         }
 
-        // Recompute event hash
         std::string computed = computeEventHash(s_ts, s_actor, s_action, s_pkg, s_ver,
                                                    s_result, s_reason, s_meta, s_stored_prev);
         if (computed != s_stored_hash) {
@@ -190,13 +272,19 @@ int AuditLog::verifyChain() {
         return 0;
     }
 
-    if (chain_valid) {
+    if (chain_valid && !tampered_since_verify) {
         std::cout << "Audit chain   " << clr::ok("valid") << std::endl;
+        std::cout << "Events        " << checked << std::endl;
+    } else if (chain_valid && tampered_since_verify) {
+        std::cout << "Audit chain   " << clr::yellow("valid (tamper detected since last verify)") << std::endl;
         std::cout << "Events        " << checked << std::endl;
     } else {
         std::cout << "Audit chain   " << clr::fail("INVALID") << std::endl;
-        return 1;
     }
 
-    return 0;
+    if (chain_valid) {
+        saveVerifyState(expected_prev, checked);
+    }
+
+    return (chain_valid ? 0 : 1);
 }

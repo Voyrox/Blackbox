@@ -13,6 +13,7 @@ add_executable(airgapctl
     src/package/Create/Create.cpp
     src/package/Sign/Sign.cpp
     src/package/Verify/Verify.cpp
+    src/package/Approve/Approve.cpp
     src/package/Version/Version.cpp
     src/package/Time/Time.cpp
     src/crypto/lib.cpp

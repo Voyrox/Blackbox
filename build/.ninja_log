@@ -1,20 +1,16 @@
-# ninja log v5
-56	312	1782620941413867000	CMakeFiles/airgapctl.dir/src/package/Sign/Sign.cpp.o	5f6965b1842d4ce3
-48	291	1782620376933826900	CMakeFiles/airgapctl.dir/src/package/version_utils.cpp.o	e17f81fe1daf87dd
-56	456	1782621776348405600	CMakeFiles/airgapctl.dir/src/crypto/lib.cpp.o	b366516726167313
-66	481	1782620941594469000	CMakeFiles/airgapctl.dir/src/store/lib.cpp.o	a370bfd5ca8058c2
-54	465	1782621776354914200	CMakeFiles/airgapctl.dir/src/package/Verify/Verify.cpp.o	f3e0d58f629ae601
-58	414	1782621776302304200	CMakeFiles/airgapctl.dir/src/audit/lib.cpp.o	f98d665d2135213d
-12	160	1782621793969572700	build.ninja	d7a20c9bcabb43f8
-52	625	1782621776523855400	CMakeFiles/airgapctl.dir/src/package/Create/Create.cpp.o	ac6d9a46266e2060
-62	462	1782620941575671500	CMakeFiles/airgapctl.dir/src/package/Time/Time.cpp.o	3b5ce1b89c874100
-35	795	1782620006788812300	CMakeFiles/airgapctl.dir/src/package/lib.cpp.o	4296297af1d497f2
-44	94	1782620006048473600	CMakeFiles/airgapctl.dir/src/policy/lib.cpp.o	ab2defb2386f155b
-50	390	1782621776269603500	CMakeFiles/airgapctl.dir/src/main.cpp.o	fe290785d32b6642
-50	382	1782620377029466200	CMakeFiles/airgapctl.dir/src/package/time_utils.cpp.o	4f05ab7b0af60614
-47	442	1782620377091823500	CMakeFiles/airgapctl.dir/src/package/verify_package.cpp.o	fc5efdbd125aa87e
-64	373	1782620941482636100	CMakeFiles/airgapctl.dir/src/sbom/lib.cpp.o	9b8425e3b274fd3f
-61	385	1782620941483637300	CMakeFiles/airgapctl.dir/src/package/Version/Version.cpp.o	4c4b99514c932163
-44	648	1782620377307748200	CMakeFiles/airgapctl.dir/src/package/create_package.cpp.o	abe5d2cb6d912d72
-630	1181	1782621777110087600	airgapctl	cb555864a80772e5
-45	241	1782620376881466600	CMakeFiles/airgapctl.dir/src/package/sign_package.cpp.o	1de4c84bfde7c522
+# ninja log v7
+18	777	8043272371476969	CMakeFiles/airgapctl.dir/src/package/Sign/Sign.cpp.obj	d9aa4eec360ca67
+39	825	8043272371694166	CMakeFiles/airgapctl.dir/src/policy/lib.cpp.obj	b33ff2279f018a16
+26	989	8043272371558790	CMakeFiles/airgapctl.dir/src/package/Version/Version.cpp.obj	593ff2e208e9a6d3
+34	1004	8043272371639125	CMakeFiles/airgapctl.dir/src/sbom/lib.cpp.obj	4ab2ac07e54cadc0
+29	1050	8043272371588771	CMakeFiles/airgapctl.dir/src/package/Time/Time.cpp.obj	de66fcd664471d1a
+42	1120	8043272371724218	CMakeFiles/airgapctl.dir/src/audit/lib.cpp.obj	f077da96b44a9170
+5	313	8043273688407673	CMakeFiles/airgapctl.dir/src/main.cpp.obj	49b2a7cf029c65d0
+36	1123	8043272371669140	CMakeFiles/airgapctl.dir/src/store/lib.cpp.obj	6fdffc5fbc60dedd
+31	1219	8043272371608794	CMakeFiles/airgapctl.dir/src/crypto/lib.cpp.obj	7e23276f9599c63a
+21	2554	8043272371507777	CMakeFiles/airgapctl.dir/src/package/Verify/Verify.cpp.obj	79673c685fc5decf
+16	2780	8043272371456919	CMakeFiles/airgapctl.dir/src/package/Create/Create.cpp.obj	7967177ec105b286
+5	243	8043272457960837	CMakeFiles/airgapctl.dir/src/package/Approve/Approve.cpp.obj	52faede5bb841494
+313	421	8043273691488633	airgapctl.exe	de7f5635f8fa0b9b
+14	357	8043275815364723	CMakeFiles/airgapctl.dir/src/main.cpp.obj	49b2a7cf029c65d0
+358	475	8043275818791736	airgapctl.exe	de7f5635f8fa0b9b
