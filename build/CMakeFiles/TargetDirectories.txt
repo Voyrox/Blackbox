@@ -1,0 +1,3 @@
+/mnt/c/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/CMakeFiles/airgapctl.dir
+/mnt/c/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/CMakeFiles/rebuild_cache.dir
