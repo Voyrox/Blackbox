@@ -11,6 +11,7 @@ public:
     ~Store();
 
     int open(const std::string& path);
+    void close();
     bool isVersionBlocked(const std::string& pkg, const std::string& version);
 
     int addImportedBundle(const std::string& id, const std::string& pkg,

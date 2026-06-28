@@ -18,6 +18,13 @@ int Store::exec(const std::string& sql) {
     return rc;
 }
 
+void Store::close() {
+    if (db_) {
+        sqlite3_close(db_);
+        db_ = nullptr;
+    }
+}
+
 int Store::open(const std::string& path) {
     int rc = sqlite3_open(path.c_str(), &db_);
     if (rc != SQLITE_OK) {

@@ -25,6 +25,13 @@ int AuditLog::exec(const std::string& sql) {
     return rc;
 }
 
+void AuditLog::close() {
+    if (db_) {
+        sqlite3_close(db_);
+        db_ = nullptr;
+    }
+}
+
 int AuditLog::open(const std::string& db_path) {
     int rc = sqlite3_open(db_path.c_str(), &db_);
     if (rc != SQLITE_OK) {

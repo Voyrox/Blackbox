@@ -35,3 +35,44 @@ target_link_libraries(airgapctl
     ${LIBCRYPTO_LIBRARIES}
     ${SQLITE3_LIBRARIES}
 )
+
+find_package(GTest CONFIG REQUIRED)
+enable_testing()
+
+add_executable(airgapctl_test
+    tests/test_version.cpp
+    tests/test_crypto.cpp
+    tests/test_store.cpp
+    tests/test_audit.cpp
+    tests/test_policy.cpp
+    tests/test_package.cpp
+    src/package/Version/Version.cpp
+    src/package/Time/Time.cpp
+    src/crypto/lib.cpp
+    src/sbom/lib.cpp
+    src/store/lib.cpp
+    src/audit/lib.cpp
+    src/policy/lib.cpp
+    src/package/Create/Create.cpp
+    src/package/Sign/Sign.cpp
+    src/package/Verify/Verify.cpp
+    src/package/Approve/Approve.cpp
+)
+
+target_include_directories(airgapctl_test PRIVATE
+    src
+    ${LIBARCHIVE_INCLUDE_DIRS}
+    ${LIBCRYPTO_INCLUDE_DIRS}
+    ${SQLITE3_INCLUDE_DIRS}
+)
+
+target_link_libraries(airgapctl_test
+    GTest::gtest
+    GTest::gtest_main
+    ${LIBARCHIVE_LIBRARIES}
+    ${LIBCRYPTO_LIBRARIES}
+    ${SQLITE3_LIBRARIES}
+)
+
+include(GoogleTest)
+gtest_discover_tests(airgapctl_test)

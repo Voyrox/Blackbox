@@ -1,16 +1,37 @@
 # ninja log v7
 18	777	8043272371476969	CMakeFiles/airgapctl.dir/src/package/Sign/Sign.cpp.obj	d9aa4eec360ca67
-39	825	8043272371694166	CMakeFiles/airgapctl.dir/src/policy/lib.cpp.obj	b33ff2279f018a16
+14	300	8043301898727966	CMakeFiles/airgapctl.dir/src/policy/lib.cpp.obj	b33ff2279f018a16
 26	989	8043272371558790	CMakeFiles/airgapctl.dir/src/package/Version/Version.cpp.obj	593ff2e208e9a6d3
 34	1004	8043272371639125	CMakeFiles/airgapctl.dir/src/sbom/lib.cpp.obj	4ab2ac07e54cadc0
 29	1050	8043272371588771	CMakeFiles/airgapctl.dir/src/package/Time/Time.cpp.obj	de66fcd664471d1a
-42	1120	8043272371724218	CMakeFiles/airgapctl.dir/src/audit/lib.cpp.obj	f077da96b44a9170
-5	313	8043273688407673	CMakeFiles/airgapctl.dir/src/main.cpp.obj	49b2a7cf029c65d0
-36	1123	8043272371669140	CMakeFiles/airgapctl.dir/src/store/lib.cpp.obj	6fdffc5fbc60dedd
+16	424	8043301898747958	CMakeFiles/airgapctl.dir/src/audit/lib.cpp.obj	f077da96b44a9170
+5	421	8043301898637723	CMakeFiles/airgapctl.dir/src/main.cpp.obj	49b2a7cf029c65d0
+12	413	8043301898707893	CMakeFiles/airgapctl.dir/src/store/lib.cpp.obj	6fdffc5fbc60dedd
 31	1219	8043272371608794	CMakeFiles/airgapctl.dir/src/crypto/lib.cpp.obj	7e23276f9599c63a
-21	2554	8043272371507777	CMakeFiles/airgapctl.dir/src/package/Verify/Verify.cpp.obj	79673c685fc5decf
+8	1000	8043301898667730	CMakeFiles/airgapctl.dir/src/package/Verify/Verify.cpp.obj	79673c685fc5decf
 16	2780	8043272371456919	CMakeFiles/airgapctl.dir/src/package/Create/Create.cpp.obj	7967177ec105b286
-5	243	8043272457960837	CMakeFiles/airgapctl.dir/src/package/Approve/Approve.cpp.obj	52faede5bb841494
-313	421	8043273691488633	airgapctl.exe	de7f5635f8fa0b9b
-14	357	8043275815364723	CMakeFiles/airgapctl.dir/src/main.cpp.obj	49b2a7cf029c65d0
-358	475	8043275818791736	airgapctl.exe	de7f5635f8fa0b9b
+10	345	8043301898682784	CMakeFiles/airgapctl.dir/src/package/Approve/Approve.cpp.obj	52faede5bb841494
+1000	1139	8043301908578177	airgapctl.exe	de7f5635f8fa0b9b
+2	121	8043302231445783	build.ninja	61d7436fe1a98afc
+2	121	8043302231405759	C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/cmake_install.cmake	61d7436fe1a98afc
+21	2306	8043301381262288	CMakeFiles/airgapctl_test.dir/tests/test_version.cpp.obj	c86693f75d625b7a
+22	816	8043301898803767	CMakeFiles/airgapctl_test.dir/tests/test_audit.cpp.obj	59d4175ab859d741
+24	839	8043301898823757	CMakeFiles/airgapctl_test.dir/tests/test_policy.cpp.obj	9330b5a6102a0446
+5	722	8043302121834686	CMakeFiles/airgapctl_test.dir/tests/test_package.cpp.obj	8126e0cbbf47459d
+19	904	8043301898773785	CMakeFiles/airgapctl_test.dir/tests/test_store.cpp.obj	96c72b3930f6a7be
+23	2706	8043301381282293	CMakeFiles/airgapctl_test.dir/tests/test_crypto.cpp.obj	99409e82af8f8c70
+2	121	8043302231415743	C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/CTestTestfile.cmake	61d7436fe1a98afc
+32	233	8043301505949987	CMakeFiles/airgapctl_test.dir/src/package/Sign/Sign.cpp.obj	ca3c724c2ba1e4ae
+21	266	8043301505834925	CMakeFiles/airgapctl_test.dir/src/sbom/lib.cpp.obj	dbfc86ea8206ed41
+14	278	8043301505764919	CMakeFiles/airgapctl_test.dir/src/package/Version/Version.cpp.obj	c383e25c637d0df2
+35	346	8043301898928900	CMakeFiles/airgapctl_test.dir/src/policy/lib.cpp.obj	b6b966adae6f6617
+41	371	8043301898993938	CMakeFiles/airgapctl_test.dir/src/package/Approve/Approve.cpp.obj	216afcbeabdebf5c
+17	321	8043301505794917	CMakeFiles/airgapctl_test.dir/src/package/Time/Time.cpp.obj	74793674f5e2b589
+29	436	8043301898878906	CMakeFiles/airgapctl_test.dir/src/store/lib.cpp.obj	ca271c4cbe375087
+32	453	8043301898898907	CMakeFiles/airgapctl_test.dir/src/audit/lib.cpp.obj	bc6d20054fa9bc7
+19	672	8043301505814927	CMakeFiles/airgapctl_test.dir/src/crypto/lib.cpp.obj	9bba03a72437a4b9
+38	1009	8043301898958896	CMakeFiles/airgapctl_test.dir/src/package/Verify/Verify.cpp.obj	7a3c541e71b8d553
+30	2278	8043301505920002	CMakeFiles/airgapctl_test.dir/src/package/Create/Create.cpp.obj	688e79bad3a8a820
+723	998	8043302131702351	airgapctl_test.exe	c7a972f164dbb95f
+723	998	8043302131702351	airgapctl_test[1]_tests.cmake	c7a972f164dbb95f
+723	998	8043302131702351	C:/Users/ewen/Documents/GitHub/Air-Gapped Update Distribution System/build/airgapctl_test[1]_tests.cmake	c7a972f164dbb95f

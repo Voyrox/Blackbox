@@ -1,7 +1,7 @@
 BUILD_DIR = build
 BINARY = $(BUILD_DIR)/airgapctl
 
-.PHONY: all run clean
+.PHONY: all test run clean
 
 all:
 	cmake -B $(BUILD_DIR) -G Ninja
@@ -21,6 +21,9 @@ run: all
 	$(BINARY) approve ics-firmware-v2 --version 2.3.1
 	$(BINARY) install ics-firmware-v2 --version 2.3.1
 	$(BINARY) status
+
+test: all
+	cd $(BUILD_DIR) && ctest --output-on-failure
 
 clean:
 	rm -rf $(BUILD_DIR) dist keys *.db

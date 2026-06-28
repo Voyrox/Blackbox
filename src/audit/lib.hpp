@@ -9,6 +9,7 @@ public:
     ~AuditLog();
 
     int open(const std::string& db_path);
+    void close();
     int writeEvent(const std::string& action, const std::string& package_name,
                     const std::string& version, const std::string& result,
                     const std::string& reason, const std::string& metadata_hash);
