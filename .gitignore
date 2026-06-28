@@ -54,3 +54,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+build/
+dist/
+keys/
