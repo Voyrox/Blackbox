@@ -30,3 +30,27 @@
 *.exe
 *.out
 *.app
+
+# Build output
+build/
+
+# Generated keys
+keys/
+
+# Distributed packages / artifacts
+dist/
+
+# SQLite databases
+*.db
+
+# Package files
+*.agpkg
+*.agpkg.sig
+
+# Editor / OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
