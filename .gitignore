@@ -1,44 +1,11 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# Go build output
+blackbox
+blackbox.exe
 
 # Build output
 build/
-
-# Generated keys
-keys/
-
-# Distributed packages / artifacts
 dist/
+keys/
 
 # SQLite databases
 *.db
@@ -54,6 +21,3 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
-build/
-dist/
-keys/

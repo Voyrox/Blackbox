@@ -4,13 +4,11 @@
 
 <br />
 
-![C++17](https://img.shields.io/badge/C++-17-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
-![CMake](https://img.shields.io/badge/CMake-3.16+-064F8C?style=for-the-badge&logo=cmake&logoColor=white)
-![OpenSSL](https://img.shields.io/badge/OpenSSL-3.0+-FFD700?style=for-the-badge&logo=openssl&logoColor=black)
-![SQLite3](https://img.shields.io/badge/SQLite3-3.45+-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![libarchive](https://img.shields.io/badge/libarchive-3.7+-black?style=for-the-badge&logo=icloud&logoColor=white)
-![Windows](https://img.shields.io/badge/Windows-MSYS2-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-WSL%2Fnative-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?style=for-the-badge&logo=go&logoColor=white)
+![SQLite3](https://img.shields.io/badge/SQLite3-pure%20Go-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-native-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-native-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![Cross-platform](https://img.shields.io/badge/Cross--compile-any--arch-green?style=for-the-badge)
 <br />
 
 **Air-Gapped Update Distribution System**  
@@ -114,22 +112,16 @@ flowchart LR
 
 **Build dependencies:**
 
-| Package       | Minimum version | Purpose                   |
-|---------------|-----------------|---------------------------|
-| CMake         | 3.16            | Build system              |
-| Ninja         | any             | Fast parallel builds      |
-| libarchive    | 3.7             | `.agpkg` archive handling |
-| OpenSSL       | 3.0 / 1.1       | ECDSA crypto + hashing    |
-| SQLite3       | 3.45            | Local database            |
-| Google Test   | 1.14            | Test framework (optional) |
-
-Google Test will be auto-downloaded via git if not found on the system.
+| Requirement | Version | Notes |
+|-------------|---------|-------|
+| Go          | 1.22+   | Single binary, no runtime deps |
 
 **Supported platforms:**
 
-- Windows (MSYS2 / MinGW)
-- WSL (Ubuntu)
-- Native Linux (Ubuntu, Debian)
+- Windows (native, no MSYS2 needed)
+- Linux (any distro)
+- macOS
+- Any architecture via `GOOS`/`GOARCH` cross-compile
 
 ---
 
@@ -149,31 +141,23 @@ Builds the tool and runs a full workflow: key generation → package creation �
 make
 ```
 
-Or step by step:
+Or directly:
 
 ```sh
-cmake -B build -G Ninja
-cmake --build build
-```
-
-### Ubuntu / WSL
-
-```sh
-sudo apt install cmake ninja-build libarchive-dev libssl-dev libsqlite3-dev libgtest-dev
-make
-```
-
-### Windows (MSYS2/MinGW)
-
-```sh
-pacman -S mingw-w64-ucrt-x86_64-{cmake,ninja,libarchive,openssl,sqlite3,gtest}
-make
+go build -o blackbox .
 ```
 
 ### Run tests
 
 ```sh
-make test          # or: cd build && ctest --output-on-failure
+make test          # or: go test ./... -v
+```
+
+### Cross-compile
+
+```sh
+GOOS=linux GOARCH=arm64 go build -o blackbox .
+GOOS=windows GOARCH=amd64 go build -o blackbox.exe .
 ```
 
 ---
@@ -181,18 +165,11 @@ make test          # or: cd build && ctest --output-on-failure
 ## Install
 
 ```sh
-make install                      # installs to /usr/local/bin
-make install PREFIX=/opt/blackbox # custom prefix
-make install DESTDIR=/tmp/stage   # staged install for packaging
+# Copy the binary to your PATH
+sudo cp blackbox /usr/local/bin/
 ```
 
-On Windows (MSYS2/MinGW), the default prefix `/usr/local` maps to `C:\msys64\usr\local`. To install system-wide outside MSYS2:
-
-```sh
-make install PREFIX=/c/Users/me/bin
-```
-
-The `blackbox` binary is copied to `$(PREFIX)/bin/`. Ensure that directory is in your `PATH`.
+No runtime dependencies required — it's a single static binary.
 
 ---
 
@@ -274,7 +251,7 @@ $ blackbox package create \
     --out dist/ics-firmware-v2-2.3.1.agpkg
 Package created: dist/ics-firmware-v2-2.3.1.agpkg
   Package:      ics-firmware-v2 2.3.1
-  Payload hash: sha256:2cdcd0ad4502429092a8feb85527aa17ec639cb687373567a7fad14cdbedb1f9
+  Payload hash: sha256:9d5b9601133cc61b64591bb9f8adb9787f74600f84b1cf0ad5029aef20e53705
   SBOM hash:    sha256:3fd5535252ca51a62de1b0a672c98a4c830eccb5732f44b3dbaa5c730f4244cc
 
 $ blackbox package sign dist/ics-firmware-v2-2.3.1.agpkg --key keys/release.key
@@ -282,7 +259,7 @@ Signature: dist/ics-firmware-v2-2.3.1.agpkg.sig
 
 $ blackbox trust add keys/release.key.pub --name "Internal Dev"
 Trusted vendor added: Internal Dev
-  Fingerprint: d9d675e32c65068d876d42aaf424e686467ec21aa6174a34507843ea247296cf
+  Fingerprint: 10665c8e26104588cb57b557d351c4db004a5790c34dcd2299fd9be21113eb52
   (verify this fingerprint with the vendor out-of-band)
 
 $ blackbox import dist/ics-firmware-v2-2.3.1.agpkg
@@ -297,32 +274,32 @@ $ blackbox import dist/ics-firmware-v2-2.3.1.agpkg
   Dependencies ✓ all clear
 
   ✓ Status: imported and pending approval
-Audit: AUDIT-6174f3
+Audit: AUDIT-322d20f
 
 $ blackbox approve ics-firmware-v2 --version 2.3.1
 Approved: ics-firmware-v2 2.3.1
-Audit: AUDIT-b2f3f9
+Audit: AUDIT-9266c53
 
 $ blackbox install ics-firmware-v2 --version 2.3.1
 Installed: ics-firmware-v2 2.3.1
-Audit: AUDIT-7332b1
+Audit: AUDIT-1c9eddb
 
 $ blackbox status
 Installed packages:
-  ics-firmware-v2 2.3.1 (installed 2026-06-28 06:59:29)
+  ics-firmware-v2 2.3.1 (installed 2026-06-28 11:18:18)
 
 Imported bundles:
-  ics-firmware-v2 2.3.1 [approved] (imported 2026-06-28 06:59:29)
+  ics-firmware-v2 2.3.1 [approved] (imported 2026-06-28 11:18:12)
 
 $ blackbox trust list
 Trusted vendors:
-  Internal Dev
-    Fingerprint: d9d675e32c65068d876d42aaf424e686467ec21aa6174a34507843ea247296cf
-    Added:       2026-06-28 06:59:29
+   Internal Dev
+    Fingerprint: 10665c8e26104588cb57b557d351c4db004a5790c34dcd2299fd9be21113eb52
+    Added:       2026-06-28 11:18:09
 
 $ blackbox audit verify-chain
 Audit chain   ✓ valid
-Events        6
+Events        3
 ```
 
 ---
