@@ -264,9 +264,8 @@ int AuditLog::verifyChain() {
 
         if (s_stored_prev != expected_prev) {
             chain_valid = false;
-            std::cout << "Chain break at " << s_ts << ": "
-                      << "expected previous hash " << expected_prev << " but got " << s_stored_prev
-                      << std::endl;
+            std::cout << "Chain break at " << s_ts << ": " << "expected previous hash "
+                      << expected_prev << " but got " << s_stored_prev << std::endl;
         }
 
         std::string computed = computeEventHash(s_ts, s_actor, s_action, s_pkg, s_ver, s_result,
